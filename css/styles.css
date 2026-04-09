@@ -1084,3 +1084,264 @@ section { padding: clamp(56px, 8vw, 96px) 0; }
   text-underline-offset: 2px;
 }
 .cart-policy-note a:hover { opacity: .8; text-decoration: underline; }
+
+/* =============================================================================
+   HERO — ORGANIC WARM BACKGROUND & PRICING ENHANCEMENTS
+   ============================================================================= */
+.hero-section {
+  background:
+    radial-gradient(ellipse at 78% 28%, rgba(232,203,168,.28) 0%, transparent 52%),
+    radial-gradient(ellipse at 12% 75%, rgba(196,149,106,.10) 0%, transparent 48%),
+    var(--bg);
+}
+
+/* Hero badge — bigger, bolder stars on both sides */
+.hero-badge-sale {
+  background: linear-gradient(135deg, #E8A040 0%, #B8601A 100%);
+  color: var(--white); border-color: transparent;
+  font-size: .9375rem; font-weight: 700; padding: 10px 22px;
+  letter-spacing: .02em; gap: 10px;
+  box-shadow: 0 4px 18px rgba(184,96,26,.30);
+  animation: saleGlow 2.6s ease-in-out infinite;
+}
+
+/* Revised hero pricing layout */
+.hero-price-block {
+  display: flex; align-items: flex-end; gap: 18px;
+}
+.hero-price-main-wrap { display: flex; flex-direction: column; gap: 1px; }
+.hero-price-was-wrap  { display: flex; flex-direction: column; gap: 1px; padding-bottom: 6px; }
+
+/* Price now — bigger + marker highlight */
+.price-now {
+  font-size: 2.5rem; font-weight: 800;
+  color: var(--text-primary); letter-spacing: -.03em; line-height: 1;
+}
+.price-now-highlight {
+  position: relative; display: inline-block;
+}
+.price-now-highlight::after {
+  content: '';
+  position: absolute;
+  inset: 2px -5px -4px -5px;
+  background: linear-gradient(105deg, rgba(255,218,70,.0) 0%, rgba(255,218,70,.40) 25%, rgba(255,224,100,.38) 75%, rgba(255,218,70,.0) 100%);
+  border-radius: 6px;
+  z-index: -1;
+  transform: rotate(-1.2deg) skewX(-3deg);
+  pointer-events: none;
+}
+
+/* Save callout pill — replaces the plain badge */
+.hero-save-callout {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #d0f0d0 0%, #b8e8b8 100%);
+  color: #2E7A2E; font-size: .9375rem; font-weight: 700;
+  border-radius: var(--r-full);
+  border: 1.5px solid rgba(46,122,46,.2);
+  box-shadow: 0 2px 10px rgba(46,122,46,.12);
+  animation: savePop 3s ease-in-out infinite;
+  align-self: flex-end; margin-bottom: 2px;
+}
+.hero-save-callout svg { fill: #2E7A2E; }
+.hero-save-callout strong { font-size: 1.0625rem; }
+
+/* Remove old price-save-badge since we use hero-save-callout now */
+.hero-pricing {
+  align-items: flex-end; gap: 16px; flex-wrap: wrap;
+}
+
+/* =============================================================================
+   DESCRIPTION MEDIA SECTION
+   ============================================================================= */
+.desc-media-section {
+  background:
+    radial-gradient(ellipse at 90% 15%, rgba(196,149,106,.08) 0%, transparent 45%),
+    var(--bg);
+  overflow: hidden;
+}
+
+/* Shared row structure */
+.desc-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 6vw, 72px);
+  align-items: center;
+  margin-bottom: clamp(56px, 8vw, 96px);
+}
+.desc-row:last-child { margin-bottom: 0; }
+
+/* Reversed row — image on right (order swap) */
+.desc-row-reverse .desc-media-img { order: 2; }
+.desc-row-reverse .desc-media-text { order: 1; }
+
+@media (max-width: 768px) {
+  .desc-row { grid-template-columns: 1fr; gap: 28px; }
+  .desc-row-reverse .desc-media-img { order: unset; }
+  .desc-row-reverse .desc-media-text { order: unset; }
+}
+
+/* Image container */
+.desc-media-img {
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: var(--bg-alt);
+  box-shadow: var(--shadow-md);
+}
+.desc-media-img img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform .55s ease;
+}
+.desc-media-img:hover img { transform: scale(1.04); }
+
+/* Text block */
+.desc-media-text {
+  display: flex; flex-direction: column; gap: 18px;
+}
+
+.desc-eyebrow {
+  font-size: .75rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--accent);
+}
+
+.desc-media-text h3 {
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  font-weight: 700; letter-spacing: -.025em;
+  line-height: 1.2; color: var(--text-primary);
+}
+
+.desc-media-text p {
+  font-size: 1.0625rem; color: var(--text-secondary);
+  line-height: 1.8; max-width: 480px;
+}
+
+/* Feature pills */
+.desc-feature-pills {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.desc-feature-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px;
+  background: var(--accent-subtle); border: 1px solid var(--accent-light);
+  border-radius: var(--r-full); font-size: .8125rem; font-weight: 600;
+  color: var(--accent-dark); line-height: 1;
+}
+.desc-feature-pill svg { flex-shrink: 0; color: var(--accent); }
+
+/* Full card (row 3) */
+.desc-full-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 6vw, 72px);
+  align-items: center;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: clamp(32px, 5vw, 60px);
+  position: relative;
+  overflow: hidden;
+}
+.desc-full-card::before {
+  content: '';
+  position: absolute;
+  width: 400px; height: 400px;
+  background: radial-gradient(ellipse, rgba(196,149,106,.12) 0%, transparent 65%);
+  border-radius: 50%;
+  top: -150px; right: -100px;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .desc-full-card { grid-template-columns: 1fr; padding: 28px 24px; }
+}
+
+.desc-full-img {
+  border-radius: var(--r-lg); overflow: hidden;
+  aspect-ratio: 4 / 3; background: var(--bg-muted);
+  box-shadow: var(--shadow-lg);
+}
+.desc-full-img img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform .55s ease;
+}
+.desc-full-img:hover img { transform: scale(1.03); }
+
+.desc-full-text {
+  display: flex; flex-direction: column; gap: 20px;
+}
+.desc-full-text h3 {
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  font-weight: 700; letter-spacing: -.025em;
+  line-height: 1.2; color: var(--text-primary);
+}
+.desc-full-text p {
+  font-size: 1.0625rem; color: var(--text-secondary); line-height: 1.8;
+}
+
+/* Specs list inside full card */
+.desc-specs-list {
+  display: flex; flex-direction: column; gap: 12px;
+  list-style: none;
+}
+.desc-specs-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: .9375rem; color: var(--text-secondary); line-height: 1.5;
+}
+.desc-specs-list li svg { flex-shrink: 0; margin-top: 2px; }
+
+.desc-cta-btn { align-self: flex-start; }
+
+/* =============================================================================
+   ANNOUNCEMENT BAR — MORE ENERGETIC
+   ============================================================================= */
+.announcement-bar {
+  background: linear-gradient(90deg, #A65C14 0%, #C4722A 35%, #C4956A 60%, #B06020 100%);
+  color: var(--white);
+  font-size: .8rem; font-weight: 500;
+  padding: 9px 0; text-align: center;
+  letter-spacing: .01em; line-height: 1.5;
+}
+
+/* =============================================================================
+   BENEFITS SECTION — SUBTLE ORGANIC ACCENT
+   ============================================================================= */
+.benefits-section {
+  position: relative; overflow: hidden;
+  background:
+    radial-gradient(ellipse at 85% 20%, rgba(196,149,106,.10) 0%, transparent 50%),
+    var(--bg-alt);
+}
+
+/* =============================================================================
+   SHOP SECTION — PRICE HIGHLIGHT
+   ============================================================================= */
+.shop-price-current {
+  position: relative; display: inline-block;
+}
+.shop-price-current::after {
+  content: '';
+  position: absolute;
+  inset: 0px -5px -5px -5px;
+  background: linear-gradient(105deg, rgba(255,218,70,.0) 0%, rgba(255,218,70,.35) 30%, rgba(255,218,70,.3) 70%, rgba(255,218,70,.0) 100%);
+  border-radius: 6px; z-index: -1;
+  transform: rotate(-1deg) skewX(-3deg); pointer-events: none;
+}
+
+/* =============================================================================
+   SALE SECTION ORGANIC ACCENT (use-cases)
+   ============================================================================= */
+.use-cases-section {
+  position: relative; overflow: hidden;
+}
+.use-cases-section::after {
+  content: '';
+  position: absolute;
+  width: 500px; height: 500px;
+  background: radial-gradient(ellipse, rgba(196,149,106,.07) 0%, transparent 65%);
+  border-radius: 50%;
+  bottom: -200px; left: -150px;
+  pointer-events: none;
+}

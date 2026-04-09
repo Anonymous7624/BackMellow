@@ -17,17 +17,26 @@ https://<your-github-username>.github.io/BackMellow/
 
 ```
 BackMellow/
-├── index.html          ← Main page (all sections)
+├── index.html                  ← Main page (all sections)
+├── privacy.html                ← Privacy Policy page
+├── terms.html                  ← Terms of Service page
+├── returns.html                ← Return Policy page
+├── shipping.html               ← Shipping Info page
 ├── css/
-│   └── styles.css      ← Full design system + responsive layout
+│   ├── styles.css              ← Full design system + responsive layout
+│   └── policy.css              ← Styles for policy/info pages
 ├── js/
-│   └── main.js         ← All interactions (cart, slideshow, FAQ, etc.)
-├── Image_1.avif        ← Product images (root level, relative paths)
+│   └── main.js                 ← All interactions (cart, slideshow, FAQ, etc.)
+├── Image_1.avif                ← Product images (root level, relative paths)
 ├── Image_2.avif
 ├── Image_3.avif
 ├── Image_4.avif
 ├── Image_5.avif
 ├── Image_6.avif
+├── Description_image_1.WEBP   ← Description section lifestyle/detail images
+├── Description_image_2.WEBP
+├── Description_image_3.WEBP
+├── CNAME                       ← Custom domain (backmellow.com)
 └── README.md
 ```
 
@@ -70,8 +79,12 @@ Then set GitHub Pages source to the `gh-pages` branch.
 | Cart persisted in localStorage | ✅ |
 | "Checkout coming soon" modal | ✅ |
 | Use cases section | ✅ |
-| Product specifications table | ✅ |
+| Product description media section (3 images) | ✅ |
+| Product specifications table (dimensions, materials) | ✅ |
 | FAQ accordion (animated) | ✅ |
+| Policy pages (Privacy, Terms, Returns, Shipping) | ✅ |
+| Color options: Black & Grey | ✅ |
+| 60-day returns + 8–12 day shipping info everywhere | ✅ |
 | Sticky header with scroll-aware styling | ✅ |
 | Smooth scroll + active nav highlighting | ✅ |
 | Mobile hamburger menu | ✅ |
@@ -99,18 +112,11 @@ const CFG = {
 ### Product Images
 Replace the `.avif` files in the repo root. Image filenames and alt text are referenced in both `index.html` (slideshow/gallery HTML) and `js/main.js` (`CFG.images` array for the lightbox).
 
-### Dimensions
-When your supplier confirms dimensions, add them to the spec table in `index.html`:
-```html
-<!-- Find this row in #details section -->
-<span class="spec-value spec-pending" role="cell">
-  <!-- Replace with: -->
-  18" × 12" × 4" (approx.)
-</span>
-```
+### Product Dimensions
+Dimensions are set in the spec table in `index.html` (`#details` section) and in the `#product-story` description media section. Current: **41 cm long × 32 cm tall**.
 
 ### Contact Email
-Replace `hello@backmellow.com` in `index.html` and `css/styles.css` with your real address.
+Contact and returns emails (`support@backmellow.com`, `returns@backmellow.com`) are used throughout `index.html` and the four policy pages.
 
 ### Adding Stripe Checkout
 When ready, replace the `openCheckoutModal()` calls in `js/main.js` with your Stripe Checkout or Payment Link integration. The cart state (`S.cart`) contains `{ color, qty }` objects ready to pass to your backend.
