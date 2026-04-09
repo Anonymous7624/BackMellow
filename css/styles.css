@@ -941,3 +941,146 @@ section { padding: clamp(56px, 8vw, 96px) 0; }
 #bm-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 #bm-toast.toast-success { background: var(--success); }
 #bm-toast.toast-error   { background: var(--error); }
+
+/* =============================================================================
+   ANNOUNCEMENT BAR
+   ============================================================================= */
+.announcement-bar {
+  background: var(--accent-dark);
+  color: var(--white);
+  font-size: .8rem;
+  font-weight: 500;
+  padding: 8px 0;
+  text-align: center;
+  letter-spacing: .01em;
+  line-height: 1.5;
+}
+.announcement-inner {
+  display: flex; align-items: center; justify-content: center;
+  gap: 4px 10px; flex-wrap: wrap; row-gap: 4px;
+}
+.ann-sep { opacity: .4; }
+.ann-tag {
+  background: rgba(255,255,255,.2); border-radius: var(--r-full);
+  padding: 2px 10px; font-weight: 700; letter-spacing: .04em;
+  font-size: .75rem; text-transform: uppercase;
+}
+.announcement-bar a {
+  color: rgba(255,255,255,.95); text-decoration: underline;
+  text-underline-offset: 2px; text-decoration-thickness: 1px;
+  font-weight: 600; transition: opacity .2s;
+}
+.announcement-bar a:hover { opacity: .75; text-decoration: underline; }
+
+/* =============================================================================
+   ENHANCED SALE STYLING
+   ============================================================================= */
+@keyframes saleGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(196,149,106,0); }
+  60%       { box-shadow: 0 0 0 6px rgba(196,149,106,.22); }
+}
+@keyframes savePop {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.05); }
+}
+
+.hero-badge-sale {
+  background: linear-gradient(135deg, #D4A060 0%, var(--accent-dark) 100%);
+  color: var(--white); border-color: var(--accent-dark);
+  font-size: .875rem; padding: 8px 18px;
+  animation: saleGlow 3.2s ease-in-out infinite;
+}
+
+.price-save-badge {
+  background: linear-gradient(135deg, #d9f0d9 0%, #c4e8c4 100%);
+  color: #3a7a3a; font-size: .875rem; font-weight: 700;
+  padding: 5px 13px;
+  border: 1px solid rgba(58,122,58,.25);
+  animation: savePop 3s ease-in-out infinite;
+}
+
+.shop-sale-flag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: linear-gradient(135deg, #D4A060 0%, var(--accent-dark) 100%);
+  color: var(--white); font-size: .75rem; font-weight: 700;
+  padding: 3px 11px; border-radius: var(--r-full);
+  letter-spacing: .05em; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.shop-save-badge {
+  background: linear-gradient(135deg, #d9f0d9 0%, #c4e8c4 100%);
+  color: #3a7a3a; font-weight: 700; font-size: .875rem;
+  padding: 5px 13px;
+  border: 1px solid rgba(58,122,58,.25);
+  animation: savePop 3s ease-in-out infinite;
+}
+
+.shop-price-current { color: var(--accent-dark) !important; }
+
+.hero-price-label {
+  font-size: .68rem; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; line-height: 1;
+}
+.hero-price-label.now { color: var(--success); }
+.hero-price-label.was { color: var(--text-muted); }
+.hero-price-stack { display: flex; flex-direction: column; gap: 1px; }
+.hero-pricing { align-items: center; }
+
+/* =============================================================================
+   SHOP TRUST ROW (under CTAs)
+   ============================================================================= */
+.shop-trust-row {
+  display: flex; align-items: center; justify-content: space-around;
+  gap: 6px 12px; flex-wrap: wrap;
+  padding: 12px 14px; margin-top: 14px;
+  background: var(--bg-alt); border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+}
+.shop-trust-item {
+  display: flex; align-items: center; gap: 5px;
+  font-size: .75rem; font-weight: 500; color: var(--text-secondary);
+  white-space: nowrap;
+}
+.shop-trust-item svg { flex-shrink: 0; color: var(--success); }
+.shop-trust-item a {
+  color: var(--accent-dark); font-weight: 600;
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.shop-trust-item a:hover { opacity: .8; text-decoration: underline; }
+
+/* =============================================================================
+   SHOP SHIPPING MINI-BLOCK
+   ============================================================================= */
+.shop-shipping-block {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: var(--accent-subtle); border: 1px solid var(--accent-light);
+  border-radius: var(--r-sm); padding: 13px 16px; margin-top: 14px;
+  font-size: .8125rem; color: var(--text-secondary); line-height: 1.6;
+}
+.shop-shipping-icon { color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+.shop-shipping-block strong { color: var(--accent-dark); }
+.shop-shipping-block a {
+  color: var(--accent-dark); font-weight: 600;
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.shop-shipping-block a:hover { opacity: .8; text-decoration: underline; }
+
+/* =============================================================================
+   TRUST STRIP — CLICKABLE LINKS
+   ============================================================================= */
+.trust-item a {
+  color: inherit; text-decoration: underline;
+  text-underline-offset: 2px; text-decoration-thickness: 1px;
+  font-weight: 600;
+}
+.trust-item a:hover { color: var(--accent-dark); text-decoration: underline; }
+
+/* =============================================================================
+   CART POLICY NOTE LINKS
+   ============================================================================= */
+.cart-policy-note a {
+  color: var(--accent-dark); text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.cart-policy-note a:hover { opacity: .8; text-decoration: underline; }

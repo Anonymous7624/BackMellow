@@ -18,6 +18,23 @@
 <body>
 
   <!-- =====================================================================
+       ANNOUNCEMENT BAR
+  ====================================================================== -->
+  <div class="announcement-bar" role="region" aria-label="Sale and store info">
+    <div class="container announcement-inner">
+      <span class="ann-tag">🎉 Sale On Now</span>
+      <span class="ann-sep">·</span>
+      <span>Save <strong>$15</strong> — now just $34.99</span>
+      <span class="ann-sep">·</span>
+      <a href="shipping.html">Ships 8–12 Days</a>
+      <span class="ann-sep">·</span>
+      <a href="returns.html">60-Day Returns</a>
+      <span class="ann-sep">·</span>
+      <a href="mailto:support@backmellow.com">support@backmellow.com</a>
+    </div>
+  </div>
+
+  <!-- =====================================================================
        HEADER
   ====================================================================== -->
   <header class="site-header" id="site-header">
@@ -275,11 +292,11 @@
 
         <!-- Hero Copy -->
         <div class="hero-copy">
-          <div class="hero-badge" aria-label="Limited time sale">
+          <div class="hero-badge hero-badge-sale" aria-label="Limited time sale — save 30%">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
             </svg>
-            Limited Sale
+            Limited Sale — 30% Off
           </div>
 
           <h1 class="hero-title">Everyday Back Comfort,<br>Wherever You Sit</h1>
@@ -287,9 +304,15 @@
           <p class="hero-sub">A supportive memory foam lumbar pillow crafted for long workdays, daily commutes, and relaxing at home. Give your back the support it deserves.</p>
 
           <div class="hero-pricing">
-            <span class="price-now">$34.99</span>
-            <span class="price-was">$49.99</span>
-            <span class="price-save-badge">Save $15</span>
+            <div class="hero-price-stack">
+              <span class="hero-price-label now">Now</span>
+              <span class="price-now">$34.99</span>
+            </div>
+            <div class="hero-price-stack">
+              <span class="hero-price-label was">Was</span>
+              <span class="price-was">$49.99</span>
+            </div>
+            <span class="price-save-badge">You Save $15!</span>
           </div>
 
           <div class="hero-ctas">
@@ -305,14 +328,14 @@
                 <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
                 <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
               </svg>
-              <span>Fast Shipping</span>
+              <span><a href="shipping.html">Ships 8–12 Days</a></span>
             </div>
             <div class="trust-item">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <polyline points="1 4 1 10 7 10"/>
                 <path d="M3.51 15a9 9 0 1 0 .49-3.28"/>
               </svg>
-              <span>30-Day Returns</span>
+              <span><a href="returns.html">60-Day Returns</a></span>
             </div>
             <div class="trust-item">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -527,10 +550,16 @@
               <span class="shop-rating-text">4.8 &middot; 3 reviews</span>
             </div>
 
+            <div>
+              <span class="shop-sale-flag">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Sale — 30% Off
+              </span>
+            </div>
             <div class="shop-price-row">
               <span class="shop-price-current">$34.99</span>
               <span class="shop-price-original">$49.99</span>
-              <span class="shop-save-badge">Save $15</span>
+              <span class="shop-save-badge">You Save $15!</span>
             </div>
 
             <div class="divider"></div>
@@ -600,11 +629,43 @@
             </button>
             <button class="btn btn-outline-primary btn-full" id="buy-now-btn" style="margin-top: 10px;">Buy Now</button>
 
+            <!-- Trust row under CTAs -->
+            <div class="shop-trust-row" aria-label="Purchase guarantees">
+              <div class="shop-trust-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.28"/></svg>
+                <a href="returns.html">60-Day Returns</a>
+              </div>
+              <div class="shop-trust-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                <a href="shipping.html">Ships 8–12 Days</a>
+              </div>
+              <div class="shop-trust-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <a href="mailto:support@backmellow.com">Get Support</a>
+              </div>
+            </div>
+
+            <!-- Shipping mini-block -->
+            <div class="shop-shipping-block">
+              <div class="shop-shipping-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                  <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                </svg>
+              </div>
+              <div>
+                <strong>Free shipping · Easy returns</strong><br>
+                U.S. orders typically arrive in <a href="shipping.html">8–12 business days</a>.
+                Not satisfied? Our <a href="returns.html">60-day return policy</a> has you covered — no stress.
+                Questions? <a href="mailto:support@backmellow.com">support@backmellow.com</a>
+              </div>
+            </div>
+
             <!-- Small reassurances -->
             <ul class="shop-reassurances">
               <li>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B8A5B" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                Free returns within 30 days
+                <a href="returns.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">60-day free returns</a>
               </li>
               <li>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B8A5B" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
@@ -781,8 +842,9 @@
         <div class="section-header">
           <h2 class="section-title">Frequently Asked Questions</h2>
           <p class="section-sub">
-            Have more questions? Reach us at
-            <a href="mailto:hello@backmellow.com">hello@backmellow.com</a>
+            Have more questions? Email us at
+            <a href="mailto:support@backmellow.com">support@backmellow.com</a>
+            or visit our <a href="shipping.html">Shipping Info</a> and <a href="returns.html">Return Policy</a> pages.
           </p>
         </div>
 
@@ -853,7 +915,7 @@
             </button>
             <div class="faq-answer" id="faq-a5" role="region" aria-labelledby="faq-q5">
               <div class="faq-answer-inner">
-                <p>We offer a 30-day return window. If for any reason you're not happy with your purchase, reach out to us at <a href="mailto:hello@backmellow.com">hello@backmellow.com</a> and we'll make it right. Your comfort is what we're here for.</p>
+                <p>We offer a <strong>60-day return window</strong>. If for any reason you're not completely satisfied, email <a href="mailto:returns@backmellow.com">returns@backmellow.com</a> and we'll walk you through the process. Your comfort is what we're here for. See our full <a href="returns.html">Return Policy</a> for details.</p>
               </div>
             </div>
           </div>
@@ -867,7 +929,7 @@
             </button>
             <div class="faq-answer" id="faq-a6" role="region" aria-labelledby="faq-q6">
               <div class="faq-answer-inner">
-                <p>Shipping timelines will be confirmed once our checkout is fully live. We're committed to fast, reliable fulfillment. Check back soon or email us for updates specific to your region.</p>
+                <p>U.S. orders typically arrive within <strong>8–12 business days</strong> from the date of purchase. This includes a brief processing window (usually 1–3 days) before shipment. Delivery times can vary slightly based on your location and carrier. For questions about your specific order, email <a href="mailto:support@backmellow.com">support@backmellow.com</a>. See our full <a href="shipping.html">Shipping Info</a> page for details.</p>
               </div>
             </div>
           </div>
@@ -881,7 +943,7 @@
             </button>
             <div class="faq-answer" id="faq-a7" role="region" aria-labelledby="faq-q7">
               <div class="faq-answer-inner">
-                <p>Individual orders are currently capped at 5 units to ensure fair availability for all customers. If you're looking for a larger quantity — for a team, office, or gift — reach out directly at <a href="mailto:hello@backmellow.com">hello@backmellow.com</a> and we'll be happy to help.</p>
+                <p>Individual orders are currently capped at 5 units to ensure fair availability for all customers. If you're looking for a larger quantity — for a team, office, or as gifts — reach out directly at <a href="mailto:support@backmellow.com">support@backmellow.com</a> and we'll be happy to help.</p>
               </div>
             </div>
           </div>
@@ -936,18 +998,18 @@
         <h4 class="footer-col-title">Support</h4>
         <ul>
           <li><a href="#faq">FAQ</a></li>
-          <li><a href="mailto:hello@backmellow.com">Contact Us</a></li>
-          <li><a href="#">Shipping Info</a></li>
-          <li><a href="#">Returns</a></li>
+          <li><a href="mailto:support@backmellow.com">Contact Us</a></li>
+          <li><a href="shipping.html">Shipping Info</a></li>
+          <li><a href="returns.html">Returns</a></li>
         </ul>
       </div>
 
       <div class="footer-col">
         <h4 class="footer-col-title">Legal</h4>
         <ul>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Terms of Service</a></li>
-          <li><a href="#">Return Policy</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+          <li><a href="returns.html">Return Policy</a></li>
         </ul>
       </div>
 
@@ -956,7 +1018,7 @@
     <div class="footer-bottom">
       <div class="container footer-bottom-inner">
         <p>&copy; 2026 BackMellow. All rights reserved.</p>
-        <a href="mailto:hello@backmellow.com" class="footer-email">hello@backmellow.com</a>
+        <a href="mailto:support@backmellow.com" class="footer-email">support@backmellow.com</a>
       </div>
     </div>
   </footer>

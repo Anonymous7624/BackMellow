@@ -249,7 +249,7 @@ function renderCartFooter() {
     <button class="cart-checkout-btn" id="cart-checkout-btn">
       Proceed to Checkout
     </button>
-    <p class="cart-policy-note">30-day returns &middot; Secure checkout coming soon</p>`;
+    <p class="cart-policy-note"><a href="returns.html">60-day returns</a> &middot; <a href="shipping.html">Ships 8–12 days</a> &middot; Checkout coming soon</p>`;
 
   document.getElementById('cart-checkout-btn')
     ?.addEventListener('click', openCheckoutModal);

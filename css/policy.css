@@ -1,0 +1,164 @@
+/* =============================================================================
+   BackMellow — policy.css
+   Shared styles for policy/info pages (returns, shipping, privacy, terms)
+   ============================================================================= */
+
+/* ---- Page layout ---- */
+.policy-main {
+  min-height: 65vh;
+  background: var(--bg);
+  padding: clamp(40px, 6vw, 80px) 0 clamp(56px, 8vw, 96px);
+}
+
+.policy-container {
+  max-width: 760px;
+}
+
+/* ---- Breadcrumb ---- */
+.policy-breadcrumb {
+  margin-bottom: 36px;
+}
+.policy-breadcrumb a {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: .875rem; font-weight: 600;
+  color: var(--accent-dark);
+  text-decoration: underline; text-underline-offset: 2px;
+  transition: opacity var(--t);
+}
+.policy-breadcrumb a:hover { opacity: .75; text-decoration: underline; }
+
+/* ---- Page header ---- */
+.policy-page-header { margin-bottom: 40px; }
+
+.policy-page-header h1 {
+  font-size: clamp(1.875rem, 4vw, 2.5rem);
+  font-weight: 700; letter-spacing: -.025em;
+  color: var(--text-primary); line-height: 1.15;
+  margin-bottom: 10px;
+}
+
+.policy-effective {
+  font-size: .875rem; color: var(--text-muted);
+  margin-bottom: 0;
+}
+
+.policy-intro {
+  font-size: 1.0625rem; color: var(--text-secondary);
+  line-height: 1.75; margin-top: 16px;
+  max-width: 640px;
+}
+
+/* ---- Content sections ---- */
+.policy-section { margin-bottom: 40px; }
+
+.policy-section h2 {
+  font-size: 1.25rem; font-weight: 700;
+  color: var(--text-primary); letter-spacing: -.015em;
+  margin-bottom: 14px; padding-bottom: 10px;
+  border-bottom: 2px solid var(--border);
+}
+
+.policy-section h3 {
+  font-size: 1rem; font-weight: 600;
+  color: var(--text-primary); margin: 20px 0 8px;
+}
+
+.policy-section p {
+  font-size: .9375rem; color: var(--text-secondary);
+  line-height: 1.8; margin-bottom: 14px;
+}
+
+.policy-section ul,
+.policy-section ol {
+  list-style: disc; padding-left: 22px; margin-bottom: 14px;
+}
+
+.policy-section ol { list-style: decimal; }
+
+.policy-section li {
+  font-size: .9375rem; color: var(--text-secondary);
+  line-height: 1.75; margin-bottom: 6px;
+}
+
+.policy-section a {
+  color: var(--accent-dark); font-weight: 500;
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.policy-section a:hover { opacity: .8; text-decoration: underline; }
+
+.policy-section strong { color: var(--text-primary); font-weight: 600; }
+
+/* ---- Callout boxes ---- */
+.policy-callout {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: var(--accent-subtle); border: 1px solid var(--accent-light);
+  border-radius: var(--r-sm); padding: 16px 20px; margin: 20px 0;
+}
+.policy-callout-icon { color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+.policy-callout-body { font-size: .9375rem; color: var(--text-secondary); line-height: 1.7; }
+.policy-callout-body strong { color: var(--accent-dark); }
+.policy-callout-body a { color: var(--accent-dark); text-decoration: underline; text-underline-offset: 2px; font-weight: 600; }
+
+.policy-callout.success {
+  background: #eef7ee; border-color: rgba(78,140,78,.3);
+}
+.policy-callout.success .policy-callout-icon { color: var(--success); }
+.policy-callout.success .policy-callout-body strong { color: #2f6b2f; }
+
+/* ---- Divider ---- */
+.policy-divider { height: 1px; background: var(--border); margin: 36px 0; }
+
+/* ---- Contact block ---- */
+.policy-contact-block {
+  background: var(--bg-alt); border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: clamp(20px, 3vw, 32px);
+  margin-top: 40px;
+}
+.policy-contact-block h2 {
+  font-size: 1.125rem; font-weight: 700;
+  color: var(--text-primary); margin-bottom: 12px; border-bottom: none; padding-bottom: 0;
+}
+.policy-contact-block p {
+  font-size: .9375rem; color: var(--text-secondary);
+  line-height: 1.7; margin-bottom: 10px;
+}
+.policy-contact-block a { color: var(--accent-dark); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.policy-contact-block a:hover { opacity: .8; text-decoration: underline; }
+.policy-contact-block p:last-child { margin-bottom: 0; }
+
+/* ---- Policy nav bar (links to sibling pages) ---- */
+.policy-nav-bar {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 36px; padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.policy-nav-bar a {
+  display: inline-flex; align-items: center;
+  padding: 6px 14px; font-size: .8125rem; font-weight: 500;
+  border-radius: var(--r-full); border: 1.5px solid var(--border);
+  color: var(--text-secondary); text-decoration: none;
+  transition: background var(--t), border-color var(--t), color var(--t);
+}
+.policy-nav-bar a:hover { background: var(--bg-muted); border-color: var(--border-dark); color: var(--text-primary); text-decoration: none; }
+.policy-nav-bar a.current { border-color: var(--accent); color: var(--accent-dark); background: var(--accent-subtle); font-weight: 600; }
+
+/* ---- Step list (for how-to processes) ---- */
+.policy-steps { display: flex; flex-direction: column; gap: 16px; margin: 16px 0; }
+.policy-step {
+  display: flex; gap: 16px; align-items: flex-start;
+}
+.policy-step-num {
+  flex-shrink: 0; width: 30px; height: 30px;
+  border-radius: var(--r-full); background: var(--accent); color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8125rem; font-weight: 700; margin-top: 1px;
+}
+.policy-step-body { flex: 1; }
+.policy-step-body strong { display: block; font-size: .9375rem; color: var(--text-primary); margin-bottom: 4px; }
+.policy-step-body p { font-size: .875rem; color: var(--text-secondary); line-height: 1.65; margin: 0; }
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .policy-nav-bar { gap: 6px; }
+  .policy-nav-bar a { font-size: .75rem; padding: 5px 12px; }
+}
