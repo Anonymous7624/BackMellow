@@ -41,6 +41,44 @@ const S = {
 };
 
 // =============================================================================
+// SCROLL LOCK — iOS-safe body scroll lock / unlock
+// Using position:fixed is required on iOS Safari; overflow:hidden alone
+// does not prevent background scroll behind modals/drawers on that platform.
+// =============================================================================
+
+let _scrollLockY  = 0;
+let _scrollLocked = false;
+
+function lockScroll() {
+  if (_scrollLocked) return;
+  _scrollLocked = true;
+  _scrollLockY  = window.scrollY;
+  document.body.style.overflow = 'hidden';
+  document.body.style.position = 'fixed';
+  document.body.style.top      = `-${_scrollLockY}px`;
+  document.body.style.left     = '0';
+  document.body.style.right    = '0';
+}
+
+function unlockScroll() {
+  if (!_scrollLocked) return;
+  // Keep locked if any overlay is still open
+  const lb    = document.getElementById('lightbox');
+  const modal = document.getElementById('checkout-modal');
+  if (S.cartOpen || S.menuOpen ||
+      lb?.classList.contains('open') ||
+      modal?.classList.contains('open')) return;
+  _scrollLocked = false;
+  const y = _scrollLockY;
+  document.body.style.overflow = '';
+  document.body.style.position = '';
+  document.body.style.top      = '';
+  document.body.style.left     = '';
+  document.body.style.right    = '';
+  window.scrollTo(0, y);
+}
+
+// =============================================================================
 // CART — LOGIC
 // =============================================================================
 
@@ -279,7 +317,7 @@ function openCart() {
   const overlay = document.getElementById('cart-overlay');
   drawer?.classList.add('open');  drawer?.setAttribute('aria-hidden', 'false');
   overlay?.classList.add('open'); overlay?.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
+  lockScroll();
   setTimeout(() => document.getElementById('cart-close-btn')?.focus(), 60);
 }
 
@@ -289,7 +327,7 @@ function closeCart() {
   const overlay = document.getElementById('cart-overlay');
   drawer?.classList.remove('open');  drawer?.setAttribute('aria-hidden', 'true');
   overlay?.classList.remove('open'); overlay?.setAttribute('aria-hidden', 'true');
-  if (!S.menuOpen) document.body.style.overflow = '';
+  unlockScroll();
   document.getElementById('cart-btn')?.focus();
 }
 
@@ -411,14 +449,14 @@ function openLightbox(idx) {
   const data = CFG.images[idx];
   img.src = data.src; img.alt = data.alt;
   lb.classList.add('open'); lb.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
+  lockScroll();
   setTimeout(() => document.getElementById('lightbox-close')?.focus(), 60);
 }
 
 function closeLightbox() {
   const lb = document.getElementById('lightbox');
   lb?.classList.remove('open'); lb?.setAttribute('aria-hidden', 'true');
-  if (!S.cartOpen && !S.menuOpen) document.body.style.overflow = '';
+  unlockScroll();
 }
 
 function lbMove(delta) {
@@ -581,6 +619,8 @@ function initFAQ() {
 // MOBILE MENU
 // =============================================================================
 
+let _closeMenuFn = null; // exposed so Escape key handler can call it
+
 function initMobileMenu() {
   const btn     = document.getElementById('mobile-menu-btn');
   const menu    = document.getElementById('mobile-menu');
@@ -591,15 +631,16 @@ function initMobileMenu() {
     btn?.classList.add('open'); btn?.setAttribute('aria-expanded', 'true');
     menu?.classList.add('open'); menu?.setAttribute('aria-hidden', 'false');
     overlay?.classList.add('open');
-    document.body.style.overflow = 'hidden';
+    lockScroll();
   }
   function closeMenu() {
     S.menuOpen = false;
     btn?.classList.remove('open'); btn?.setAttribute('aria-expanded', 'false');
     menu?.classList.remove('open'); menu?.setAttribute('aria-hidden', 'true');
     overlay?.classList.remove('open');
-    if (!S.cartOpen) document.body.style.overflow = '';
+    unlockScroll();
   }
+  _closeMenuFn = closeMenu;
 
   btn?.addEventListener('click', () => S.menuOpen ? closeMenu() : openMenu());
   overlay?.addEventListener('click', closeMenu);
@@ -615,7 +656,7 @@ function openCheckoutModal() {
   const modal    = document.getElementById('checkout-modal');
   backdrop?.classList.add('open'); backdrop?.setAttribute('aria-hidden', 'false');
   modal?.classList.add('open');    modal?.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
+  lockScroll();
   setTimeout(() => document.getElementById('checkout-modal-ok')?.focus(), 60);
 }
 
@@ -624,7 +665,7 @@ function closeCheckoutModal() {
   const modal    = document.getElementById('checkout-modal');
   backdrop?.classList.remove('open'); backdrop?.setAttribute('aria-hidden', 'true');
   modal?.classList.remove('open');    modal?.setAttribute('aria-hidden', 'true');
-  if (!S.cartOpen && !S.menuOpen) document.body.style.overflow = '';
+  unlockScroll();
 }
 
 function initCheckoutModal() {
@@ -739,7 +780,8 @@ function initGlobalKeyDown() {
     if (e.key === 'Escape') {
       if (document.getElementById('lightbox')?.classList.contains('open')) { closeLightbox(); return; }
       if (document.getElementById('checkout-modal')?.classList.contains('open')) { closeCheckoutModal(); return; }
-      if (S.cartOpen) { closeCart(); return; }
+      if (S.cartOpen)  { closeCart(); return; }
+      if (S.menuOpen && _closeMenuFn) { _closeMenuFn(); return; }
     }
   });
 }

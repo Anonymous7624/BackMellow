@@ -1443,3 +1443,106 @@ section { padding: clamp(56px, 8vw, 96px) 0; }
   .social-buttons-row { width: 100%; }
   .btn-social { flex: 1; justify-content: center; min-width: 0; }
 }
+
+/* =============================================================================
+   MOBILE UX FIXES — scroll, z-index, overlap, touch, animation
+   ============================================================================= */
+
+/* 1. CRITICAL: disable sticky shop gallery on single-column mobile layout.
+      Without this, the image sticks in the viewport while the purchase box
+      (with all its buttons) scrolls underneath it — causing full overlap. */
+@media (max-width: 899px) {
+  .shop-gallery {
+    position: static;
+  }
+}
+
+/* 2. Prevent any stray horizontal scrollbar */
+body { overflow-x: hidden; }
+
+/* 3. Slideshow swipe: let the browser handle vertical pan so horizontal
+      swipe gestures don't fight the page scroll */
+.slideshow {
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* 4. Slide expand / zoom button: always visible on touch devices
+      (hover state is never triggered on phones, so the button was invisible) */
+@media (hover: none) {
+  .slide-expand-btn { opacity: 1; }
+}
+
+/* 5. Kill hover-only transforms on touch screens.
+      Long-press can activate :hover in some mobile browsers, causing
+      cards to pop up and then snap back — looks broken and unstable. */
+@media (hover: none) {
+  .benefit-card:hover  { transform: none; box-shadow: none; }
+  .review-card:hover   { transform: none; box-shadow: none; }
+  .use-case-card:hover { transform: none; box-shadow: none; }
+  .desc-media-img:hover img,
+  .desc-full-img:hover img,
+  .shop-main-img-wrap:hover img { transform: none; }
+  .btn-tiktok:hover { transform: none; }
+}
+
+/* 6. Mobile menu: scrollable when content is tall, prevent scroll bleed */
+.mobile-menu {
+  max-height: calc(100dvh - var(--header-h));
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
+
+/* 7. Cart drawer body: contain overscroll so pulling past the top/bottom
+      of the cart list doesn't bounce the page behind it */
+.cart-drawer-body {
+  overscroll-behavior-y: contain;
+}
+
+/* 8. Lightbox: contain scroll/touch so swipes don't escape */
+.lightbox {
+  overscroll-behavior: contain;
+}
+
+/* 9. Overlay backdrops: block accidental touch-through to content below */
+.mobile-menu-overlay,
+.cart-overlay,
+.modal-backdrop {
+  touch-action: none;
+}
+
+/* 10. Tone down the reveal translateY on small screens to reduce jumpiness */
+@media (max-width: 600px) {
+  .reveal { transform: translateY(14px); }
+}
+
+/* 11. Respect the OS reduced-motion preference — skip all animations */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .hero-badge-sale,
+  .price-save-badge,
+  .shop-save-badge,
+  .hero-save-callout {
+    animation: none;
+  }
+}
+
+/* 12. Ensure description media images never escape their containers on mobile */
+@media (max-width: 768px) {
+  .desc-media-img,
+  .desc-full-img {
+    max-width: 100%;
+  }
+}
+
+/* 13. Hero CTA buttons: full-width stacking on very small screens */
+@media (max-width: 400px) {
+  .hero-ctas { flex-direction: column; }
+  .hero-ctas .btn { width: 100%; }
+}
