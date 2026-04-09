@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="BackMellow — Premium lumbar support pillow for everyday seated comfort. Memory foam fill, machine-washable cover. Designed for desk, car, and home. Starting at $34.99." />
+  <meta property="og:title" content="BackMellow — Everyday Back Comfort" />
+  <meta property="og:description" content="A premium lumbar support pillow built for your desk, car, and home. Memory foam fill, soft polyester cover." />
+  <title>BackMellow — Everyday Back Comfort</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- =====================================================================
+       HEADER
+  ====================================================================== -->
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+
+      <a href="#home" class="logo" aria-label="BackMellow — Home">
+        <span class="logo-mark" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+            <ellipse cx="15" cy="18" rx="12" ry="8" fill="#C4956A" opacity="0.85"/>
+            <ellipse cx="15" cy="15" rx="8" ry="5" fill="#E8CBA8" opacity="0.75"/>
+          </svg>
+        </span>
+        <span class="logo-text">BackMellow</span>
+      </a>
+
+      <nav class="main-nav" aria-label="Main navigation">
+        <ul class="nav-list" role="list">
+          <li><a href="#home"     class="nav-link">Home</a></li>
+          <li><a href="#benefits" class="nav-link">Benefits</a></li>
+          <li><a href="#reviews"  class="nav-link">Reviews</a></li>
+          <li><a href="#faq"      class="nav-link">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <a href="#shop" class="header-shop-link btn btn-accent-sm">Shop $34.99</a>
+
+        <button class="cart-btn" id="cart-btn" aria-label="View cart (0 items)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+          </svg>
+          <span class="cart-badge" id="cart-count" aria-live="polite" aria-atomic="true" hidden>0</span>
+        </button>
+
+        <button class="mobile-menu-btn" id="mobile-menu-btn"
+                aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="hamburger" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- =====================================================================
+       MOBILE MENU
+  ====================================================================== -->
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay" aria-hidden="true"></div>
+  <nav class="mobile-menu" id="mobile-menu" aria-hidden="true" aria-label="Mobile navigation">
+    <ul class="mobile-nav-list" role="list">
+      <li><a href="#home"     class="mobile-nav-link">Home</a></li>
+      <li><a href="#benefits" class="mobile-nav-link">Benefits</a></li>
+      <li><a href="#reviews"  class="mobile-nav-link">Reviews</a></li>
+      <li><a href="#faq"      class="mobile-nav-link">FAQ</a></li>
+      <li><a href="#shop"     class="mobile-nav-link mobile-nav-cta">Shop Now — $34.99</a></li>
+    </ul>
+  </nav>
+
+  <!-- =====================================================================
+       CART DRAWER
+  ====================================================================== -->
+  <div class="cart-overlay" id="cart-overlay" aria-hidden="true"></div>
+  <aside class="cart-drawer" id="cart-drawer"
+         role="dialog" aria-label="Shopping cart" aria-modal="true" aria-hidden="true">
+    <div class="cart-drawer-header">
+      <h2 class="cart-drawer-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        Your Cart
+      </h2>
+      <button class="cart-drawer-close" id="cart-close-btn" aria-label="Close cart">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="cart-drawer-body" id="cart-body"></div>
+    <div class="cart-drawer-footer" id="cart-footer"></div>
+  </aside>
+
+  <!-- =====================================================================
+       CHECKOUT COMING SOON MODAL
+  ====================================================================== -->
+  <div class="modal-backdrop" id="checkout-modal-backdrop" aria-hidden="true"></div>
+  <div class="modal" id="checkout-modal"
+       role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title" aria-hidden="true">
+    <div class="modal-box">
+      <button class="modal-close-btn" id="checkout-modal-close" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <div class="modal-icon-wrap">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="1.5" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+      <h2 class="modal-title" id="checkout-modal-title">Secure Checkout Coming Soon</h2>
+      <p class="modal-body-text">We're putting the finishing touches on our Stripe-powered checkout. Your cart is saved and will be ready to go when we launch — check back soon!</p>
+      <button class="btn btn-primary btn-full" id="checkout-modal-ok">Got it, thanks</button>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       LIGHTBOX
+  ====================================================================== -->
+  <div class="lightbox" id="lightbox"
+       role="dialog" aria-modal="true" aria-label="Product image viewer" aria-hidden="true">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Close image viewer">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+    <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous image">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+    <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next image">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+    </button>
+    <div class="lightbox-img-wrap">
+      <img id="lightbox-img" src="" alt="" />
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       MAIN CONTENT
+  ====================================================================== -->
+  <main>
+
+    <!-- ===== HERO ===== -->
+    <section id="home" class="hero-section">
+      <div class="container hero-inner">
+
+        <!-- Gallery / Slideshow -->
+        <div class="hero-gallery">
+          <div class="slideshow" id="slideshow"
+               role="region" aria-label="Product images" aria-roledescription="carousel">
+            <div class="slideshow-stage" id="slideshow-stage">
+
+              <div class="slide active" data-index="0"
+                   role="group" aria-roledescription="slide" aria-label="Image 1 of 6">
+                <img src="Image_1.avif" alt="BackMellow lumbar pillow — front view" loading="eager" />
+                <button class="slide-expand-btn" data-slide-index="0" aria-label="Enlarge image 1">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+                    <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="slide" data-index="1"
+                   role="group" aria-roledescription="slide" aria-label="Image 2 of 6">
+                <img src="Image_2.avif" alt="BackMellow lumbar pillow — side profile" loading="lazy" />
+                <button class="slide-expand-btn" data-slide-index="1" aria-label="Enlarge image 2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+                    <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="slide" data-index="2"
+                   role="group" aria-roledescription="slide" aria-label="Image 3 of 6">
+                <img src="Image_3.avif" alt="BackMellow lumbar pillow — cover texture detail" loading="lazy" />
+                <button class="slide-expand-btn" data-slide-index="2" aria-label="Enlarge image 3">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+                    <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="slide" data-index="3"
+                   role="group" aria-roledescription="slide" aria-label="Image 4 of 6">
+                <img src="Image_4.avif" alt="BackMellow lumbar pillow — shown on an office chair" loading="lazy" />
+                <button class="slide-expand-btn" data-slide-index="3" aria-label="Enlarge image 4">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+                    <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="slide" data-index="4"
+                   role="group" aria-roledescription="slide" aria-label="Image 5 of 6">
+                <img src="Image_5.avif" alt="BackMellow lumbar pillow — grey colorway" loading="lazy" />
+                <button class="slide-expand-btn" data-slide-index="4" aria-label="Enlarge image 5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+                    <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="slide" data-index="5"
+                   role="group" aria-roledescription="slide" aria-label="Image 6 of 6">
+                <img src="Image_6.avif" alt="BackMellow lumbar pillow — lifestyle use" loading="lazy" />
+                <button class="slide-expand-btn" data-slide-index="5" aria-label="Enlarge image 6">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+                    <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+                  </svg>
+                </button>
+              </div>
+
+            </div><!-- /.slideshow-stage -->
+
+            <!-- Arrows -->
+            <button class="slide-arrow slide-prev" id="slide-prev" aria-label="Previous image">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <polyline points="15 18 9 12 15 6"/>
+              </svg>
+            </button>
+            <button class="slide-arrow slide-next" id="slide-next" aria-label="Next image">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </button>
+
+            <!-- Dot indicators -->
+            <div class="slide-dots" id="slide-dots" role="tablist" aria-label="Image navigation"></div>
+          </div><!-- /.slideshow -->
+
+          <!-- Thumbnails -->
+          <div class="hero-thumbnails" id="hero-thumbnails" aria-label="Product image thumbnails">
+            <button class="thumb active" data-thumb-index="0" aria-label="View image 1" aria-pressed="true">
+              <img src="Image_1.avif" alt="" aria-hidden="true" loading="lazy" />
+            </button>
+            <button class="thumb" data-thumb-index="1" aria-label="View image 2" aria-pressed="false">
+              <img src="Image_2.avif" alt="" aria-hidden="true" loading="lazy" />
+            </button>
+            <button class="thumb" data-thumb-index="2" aria-label="View image 3" aria-pressed="false">
+              <img src="Image_3.avif" alt="" aria-hidden="true" loading="lazy" />
+            </button>
+            <button class="thumb" data-thumb-index="3" aria-label="View image 4" aria-pressed="false">
+              <img src="Image_4.avif" alt="" aria-hidden="true" loading="lazy" />
+            </button>
+            <button class="thumb" data-thumb-index="4" aria-label="View image 5" aria-pressed="false">
+              <img src="Image_5.avif" alt="" aria-hidden="true" loading="lazy" />
+            </button>
+            <button class="thumb" data-thumb-index="5" aria-label="View image 6" aria-pressed="false">
+              <img src="Image_6.avif" alt="" aria-hidden="true" loading="lazy" />
+            </button>
+          </div>
+        </div><!-- /.hero-gallery -->
+
+        <!-- Hero Copy -->
+        <div class="hero-copy">
+          <div class="hero-badge" aria-label="Limited time sale">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+            Limited Sale
+          </div>
+
+          <h1 class="hero-title">Everyday Back Comfort,<br>Wherever You Sit</h1>
+
+          <p class="hero-sub">A supportive memory foam lumbar pillow crafted for long workdays, daily commutes, and relaxing at home. Give your back the support it deserves.</p>
+
+          <div class="hero-pricing">
+            <span class="price-now">$34.99</span>
+            <span class="price-was">$49.99</span>
+            <span class="price-save-badge">Save $15</span>
+          </div>
+
+          <div class="hero-ctas">
+            <a href="#shop" class="btn btn-primary">Shop Now</a>
+            <a href="#details" class="btn btn-ghost">See Details</a>
+          </div>
+
+          <!-- Trust strip -->
+          <div class="trust-strip" aria-label="Shopping guarantees">
+            <div class="trust-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="1" y="3" width="15" height="13"/>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+              </svg>
+              <span>Fast Shipping</span>
+            </div>
+            <div class="trust-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <polyline points="1 4 1 10 7 10"/>
+                <path d="M3.51 15a9 9 0 1 0 .49-3.28"/>
+              </svg>
+              <span>30-Day Returns</span>
+            </div>
+            <div class="trust-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <span>Secure Checkout</span>
+            </div>
+            <div class="trust-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+              </svg>
+              <span>Machine Washable</span>
+            </div>
+          </div>
+        </div><!-- /.hero-copy -->
+
+      </div><!-- /.hero-inner -->
+    </section><!-- /#home -->
+
+
+    <!-- ===== BENEFITS ===== -->
+    <section id="benefits" class="benefits-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Built for Everyday Comfort</h2>
+          <p class="section-sub">Simple materials, thoughtful design, and genuine everyday usability — that's BackMellow.</p>
+        </div>
+
+        <div class="benefits-grid">
+
+          <div class="benefit-card reveal">
+            <div class="benefit-icon-wrap" aria-hidden="true">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="7" width="20" height="4" rx="2"/>
+                <rect x="2" y="13" width="20" height="4" rx="2"/>
+                <path d="M6 7 Q12 3 18 7"/>
+              </svg>
+            </div>
+            <h3>Supportive Memory Foam</h3>
+            <p>Responsive memory foam that gently contours to your lower back, offering consistent, comfortable cushioning throughout your day.</p>
+          </div>
+
+          <div class="benefit-card reveal">
+            <div class="benefit-icon-wrap" aria-hidden="true">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </div>
+            <h3>Soft Polyester Cover</h3>
+            <p>A smooth, breathable 100% polyester cover feels pleasant against any fabric, keeping you comfortable hour after hour.</p>
+          </div>
+
+          <div class="benefit-card reveal">
+            <div class="benefit-icon-wrap" aria-hidden="true">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            </div>
+            <h3>Desk, Car &amp; Home Ready</h3>
+            <p>Designed to work wherever you sit — office chair, driver's seat, sofa, or dining chair. Versatile enough for any environment.</p>
+          </div>
+
+          <div class="benefit-card reveal">
+            <div class="benefit-icon-wrap" aria-hidden="true">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+              </svg>
+            </div>
+            <h3>Machine-Washable Cover</h3>
+            <p>The removable polyester cover goes straight into the washing machine. Keeping your BackMellow fresh is as easy as laundry day.</p>
+          </div>
+
+          <div class="benefit-card reveal">
+            <div class="benefit-icon-wrap" aria-hidden="true">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+                <path d="M12 6v6l4 2"/>
+              </svg>
+            </div>
+            <h3>Ergonomic Lumbar Shape</h3>
+            <p>Shaped to follow the natural curve of your lower back, the BackMellow tucks neatly behind you on virtually any seat.</p>
+          </div>
+
+          <div class="benefit-card reveal">
+            <div class="benefit-icon-wrap" aria-hidden="true">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="13.5" cy="6.5" r="3.5"/>
+                <circle cx="6.5" cy="14.5" r="3.5"/>
+                <circle cx="17.5" cy="16.5" r="3.5"/>
+              </svg>
+            </div>
+            <h3>Available in Black &amp; Grey</h3>
+            <p>Two timeless, neutral colorways that complement any chair or interior. Choose the one that fits your space best.</p>
+          </div>
+
+        </div><!-- /.benefits-grid -->
+      </div>
+    </section><!-- /#benefits -->
+
+
+    <!-- ===== REVIEWS ===== -->
+    <section id="reviews" class="reviews-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">What Customers Are Saying</h2>
+          <p class="section-sub reviews-disclaimer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            Sample customer reviews — representative of the comfort experience we're building.
+          </p>
+        </div>
+
+        <div class="reviews-grid">
+
+          <article class="review-card reveal">
+            <div class="review-stars" aria-label="5 out of 5 stars">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#C4956A" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#C4956A" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#C4956A" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#C4956A" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#C4956A" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <blockquote class="review-text">"I work from home and spend about 8 hours at my desk each day. The BackMellow sits perfectly on my office chair — it stays in place and the memory foam holds up all day long."</blockquote>
+            <cite class="review-author">
+              <span class="review-name">Sarah M.</span>
+              <span class="review-detail">Verified Buyer &middot; Remote Worker</span>
+            </cite>
+          </article>
+
+          <article class="review-card reveal">
+            <div class="review-stars" aria-label="5 out of 5 stars">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#C4956A" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#C4956A" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#C4956A" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#C4956A" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#C4956A" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <blockquote class="review-text">"I drive 45 minutes each way to work. I ordered one for the car and loved it so much I bought another for home. The grey looks great and the cover washes up perfectly."</blockquote>
+            <cite class="review-author">
+              <span class="review-name">James R.</span>
+              <span class="review-detail">Verified Buyer &middot; Daily Commuter</span>
+            </cite>
+          </article>
+
+          <article class="review-card reveal">
+            <div class="review-stars" aria-label="4 out of 5 stars">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#C4956A" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#C4956A" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#C4956A" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#C4956A" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="1.5" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <blockquote class="review-text">"Solid quality at a fair price. I use it at my desk and on the couch for evenings. The cover really does wash well. Good product — would recommend to anyone who sits a lot."</blockquote>
+            <cite class="review-author">
+              <span class="review-name">Priya K.</span>
+              <span class="review-detail">Verified Buyer &middot; Home Office</span>
+            </cite>
+          </article>
+
+        </div><!-- /.reviews-grid -->
+      </div>
+    </section><!-- /#reviews -->
+
+
+    <!-- ===== SHOP / PURCHASE ===== -->
+    <section id="shop" class="shop-section">
+      <div class="container shop-layout">
+
+        <!-- Shop Gallery -->
+        <div class="shop-gallery">
+          <div class="shop-main-img-wrap">
+            <img src="Image_1.avif" alt="BackMellow Lumbar Pillow" id="shop-main-img" />
+          </div>
+          <div class="shop-thumbnails" id="shop-thumbnails" aria-label="Product image selection">
+            <button class="shop-thumb active" data-src="Image_1.avif" data-alt="BackMellow pillow — view 1"
+                    aria-label="View image 1" aria-pressed="true">
+              <img src="Image_1.avif" alt="" loading="lazy" />
+            </button>
+            <button class="shop-thumb" data-src="Image_2.avif" data-alt="BackMellow pillow — view 2"
+                    aria-label="View image 2" aria-pressed="false">
+              <img src="Image_2.avif" alt="" loading="lazy" />
+            </button>
+            <button class="shop-thumb" data-src="Image_3.avif" data-alt="BackMellow pillow — view 3"
+                    aria-label="View image 3" aria-pressed="false">
+              <img src="Image_3.avif" alt="" loading="lazy" />
+            </button>
+            <button class="shop-thumb" data-src="Image_4.avif" data-alt="BackMellow pillow — view 4"
+                    aria-label="View image 4" aria-pressed="false">
+              <img src="Image_4.avif" alt="" loading="lazy" />
+            </button>
+          </div>
+        </div>
+
+        <!-- Purchase Box -->
+        <div class="purchase-box">
+          <div class="purchase-box-inner">
+
+            <p class="shop-brand-label">BackMellow</p>
+            <h2 class="shop-product-name">Lumbar Support Pillow</h2>
+
+            <div class="shop-rating" aria-label="4.8 out of 5 average rating">
+              <div class="star-row" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#C4956A"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#C4956A"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#C4956A"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#C4956A"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#C4956A" opacity="0.45"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+              <span class="shop-rating-text">4.8 &middot; 3 reviews</span>
+            </div>
+
+            <div class="shop-price-row">
+              <span class="shop-price-current">$34.99</span>
+              <span class="shop-price-original">$49.99</span>
+              <span class="shop-save-badge">Save $15</span>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Color -->
+            <div class="option-group">
+              <label class="option-label">
+                Color: <strong id="selected-color-label">Black</strong>
+              </label>
+              <div class="color-options" id="color-options" role="radiogroup" aria-label="Select pillow color">
+                <button class="color-swatch active" data-color="Black" role="radio" aria-checked="true" aria-label="Black">
+                  <span class="swatch-dot swatch-black"></span>
+                  Black
+                </button>
+                <button class="color-swatch" data-color="Grey" role="radio" aria-checked="false" aria-label="Grey">
+                  <span class="swatch-dot swatch-grey"></span>
+                  Grey
+                </button>
+              </div>
+            </div>
+
+            <!-- Quantity -->
+            <div class="option-group">
+              <label class="option-label">
+                Quantity <span class="max-qty-note">(max 5 per order)</span>
+              </label>
+              <div class="qty-control" role="group" aria-label="Quantity selector">
+                <button class="qty-btn" id="qty-decrease" aria-label="Decrease quantity">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                </button>
+                <span class="qty-display" id="qty-display" aria-live="polite" aria-atomic="true">1</span>
+                <button class="qty-btn" id="qty-increase" aria-label="Increase quantity">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Dynamic pricing -->
+            <div class="pricing-display" id="pricing-display" aria-live="polite"></div>
+
+            <!-- Bundle callout -->
+            <div class="bundle-callout" id="bundle-callout">
+              <div class="bundle-callout-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="21 8 21 21 3 21 3 8"/>
+                  <rect x="1" y="3" width="22" height="5"/>
+                  <line x1="10" y1="12" x2="14" y2="12"/>
+                </svg>
+              </div>
+              <div>
+                <strong>Bundle Deal</strong> — Buy 3 or more at just $30 each.
+                <br><span class="bundle-sub">Save an extra $4.99 per pillow when you bundle.</span>
+              </div>
+            </div>
+
+            <!-- CTAs -->
+            <button class="btn btn-primary btn-full" id="add-to-cart-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+              </svg>
+              Add to Cart
+            </button>
+            <button class="btn btn-outline-primary btn-full" id="buy-now-btn" style="margin-top: 10px;">Buy Now</button>
+
+            <!-- Small reassurances -->
+            <ul class="shop-reassurances">
+              <li>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B8A5B" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                Free returns within 30 days
+              </li>
+              <li>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B8A5B" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                Machine-washable cover included
+              </li>
+              <li>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B8A5B" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                Available in Black and Grey
+              </li>
+            </ul>
+
+          </div><!-- /.purchase-box-inner -->
+        </div><!-- /.purchase-box -->
+
+      </div><!-- /.shop-layout -->
+    </section><!-- /#shop -->
+
+
+    <!-- ===== USE CASES ===== -->
+    <section id="use-cases" class="use-cases-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Take It Anywhere You Sit</h2>
+          <p class="section-sub">BackMellow is designed to add comfort to the moments you're seated most.</p>
+        </div>
+
+        <div class="use-cases-grid">
+
+          <div class="use-case-card reveal">
+            <div class="use-case-icon" aria-hidden="true">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="3" width="20" height="14" rx="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+              </svg>
+            </div>
+            <h3>Office &amp; Desk</h3>
+            <p>Long hours at your workstation call for the right support. BackMellow fits neatly on any office chair to help you stay comfortable through the full workday.</p>
+          </div>
+
+          <div class="use-case-card reveal">
+            <div class="use-case-icon" aria-hidden="true">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/>
+                <rect x="9" y="11" width="14" height="10" rx="2"/>
+                <line x1="12" y1="11" x2="12" y2="21"/>
+                <line x1="9" y1="16" x2="23" y2="16"/>
+              </svg>
+            </div>
+            <h3>Daily Commute</h3>
+            <p>Car seats weren't designed with your lumbar in mind. BackMellow slips easily behind you and makes every commute — long or short — noticeably more comfortable.</p>
+          </div>
+
+          <div class="use-case-card reveal">
+            <div class="use-case-icon" aria-hidden="true">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+            </div>
+            <h3>At Home</h3>
+            <p>From the couch to the reading chair, BackMellow moves with your lifestyle. A reliable companion for evenings, weekends, and everything in between.</p>
+          </div>
+
+          <div class="use-case-card reveal">
+            <div class="use-case-icon" aria-hidden="true">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="6" y1="7" x2="6" y2="4"/>
+                <line x1="18" y1="7" x2="18" y2="4"/>
+              </svg>
+            </div>
+            <h3>Dining &amp; Casual Seating</h3>
+            <p>Dining chairs and casual seating rarely offer back support. BackMellow adds just the right cushioning for extended time at the table or in a relaxed seat.</p>
+          </div>
+
+        </div><!-- /.use-cases-grid -->
+      </div>
+    </section><!-- /#use-cases -->
+
+
+    <!-- ===== PRODUCT DETAILS ===== -->
+    <section id="details" class="details-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Product Details</h2>
+          <p class="section-sub">Everything you need to know about what's inside the BackMellow.</p>
+        </div>
+
+        <div class="specs-layout">
+
+          <div class="specs-table" role="table" aria-label="Product specifications">
+            <div class="spec-row" role="row">
+              <span class="spec-label" role="rowheader">Product Type</span>
+              <span class="spec-value" role="cell">Lumbar Support Pillow</span>
+            </div>
+            <div class="spec-row" role="row">
+              <span class="spec-label" role="rowheader">Fill Material</span>
+              <span class="spec-value" role="cell">Memory Foam</span>
+            </div>
+            <div class="spec-row" role="row">
+              <span class="spec-label" role="rowheader">Cover Material</span>
+              <span class="spec-value" role="cell">100% Polyester</span>
+            </div>
+            <div class="spec-row" role="row">
+              <span class="spec-label" role="rowheader">Care Instructions</span>
+              <span class="spec-value" role="cell">Machine Wash (cover)</span>
+            </div>
+            <div class="spec-row" role="row">
+              <span class="spec-label" role="rowheader">Available Colors</span>
+              <span class="spec-value" role="cell">Black, Grey</span>
+            </div>
+            <div class="spec-row" role="row">
+              <span class="spec-label" role="rowheader">Printed Exterior</span>
+              <span class="spec-value" role="cell">None — solid color finish</span>
+            </div>
+            <div class="spec-row" role="row">
+              <span class="spec-label" role="rowheader">Country of Origin</span>
+              <span class="spec-value" role="cell">Guangdong, China</span>
+            </div>
+            <div class="spec-row spec-row-pending" role="row">
+              <span class="spec-label" role="rowheader">Dimensions</span>
+              <span class="spec-value spec-pending" role="cell">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                Exact dimensions to be confirmed — check back soon
+              </span>
+            </div>
+          </div><!-- /.specs-table -->
+
+          <div class="specs-features">
+            <h3>What Makes It Work</h3>
+            <ul class="features-list">
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                Memory foam adapts to your body shape over time
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                Designed to fit standard office chairs, car seats, and sofas
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                Smooth polyester cover stays comfortable against clothing
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                Removable cover makes washing easy
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                Gentle ergonomic contouring for everyday lumbar support
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                Neutral colorways that blend into any home or office setting
+              </li>
+            </ul>
+          </div>
+
+        </div><!-- /.specs-layout -->
+      </div>
+    </section><!-- /#details -->
+
+
+    <!-- ===== FAQ ===== -->
+    <section id="faq" class="faq-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <p class="section-sub">
+            Have more questions? Reach us at
+            <a href="mailto:hello@backmellow.com">hello@backmellow.com</a>
+          </p>
+        </div>
+
+        <div class="faq-list" id="faq-list">
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-a1" id="faq-q1">
+              <span>What is the BackMellow made of?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </button>
+            <div class="faq-answer" id="faq-a1" role="region" aria-labelledby="faq-q1">
+              <div class="faq-answer-inner">
+                <p>BackMellow uses a memory foam fill inside a soft 100% polyester cover. The cover is designed to be removable and machine washable, making it easy to keep fresh with regular use.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-a2" id="faq-q2">
+              <span>Is the cover machine washable?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </button>
+            <div class="faq-answer" id="faq-a2" role="region" aria-labelledby="faq-q2">
+              <div class="faq-answer-inner">
+                <p>Yes. The polyester cover can be removed and machine washed. We recommend a gentle cycle with cold water and air drying to keep the fabric looking and feeling its best.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-a3" id="faq-q3">
+              <span>Does it come in different colors?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </button>
+            <div class="faq-answer" id="faq-a3" role="region" aria-labelledby="faq-q3">
+              <div class="faq-answer-inner">
+                <p>BackMellow is available in two classic colorways: Black and Grey. Both are solid, neutral tones that work well in home, office, or car settings. You can select your preferred color in the shop section above.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-a4" id="faq-q4">
+              <span>Can I use it in a car?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </button>
+            <div class="faq-answer" id="faq-a4" role="region" aria-labelledby="faq-q4">
+              <div class="faq-answer-inner">
+                <p>Absolutely. BackMellow is a great fit for car seats during daily commutes or long road trips. Its ergonomic shape sits naturally against most vehicle seat backs, and the compact size means it moves easily between your car and office.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-a5" id="faq-q5">
+              <span>What if it doesn't work for me?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </button>
+            <div class="faq-answer" id="faq-a5" role="region" aria-labelledby="faq-q5">
+              <div class="faq-answer-inner">
+                <p>We offer a 30-day return window. If for any reason you're not happy with your purchase, reach out to us at <a href="mailto:hello@backmellow.com">hello@backmellow.com</a> and we'll make it right. Your comfort is what we're here for.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-a6" id="faq-q6">
+              <span>How long does shipping take?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </button>
+            <div class="faq-answer" id="faq-a6" role="region" aria-labelledby="faq-q6">
+              <div class="faq-answer-inner">
+                <p>Shipping timelines will be confirmed once our checkout is fully live. We're committed to fast, reliable fulfillment. Check back soon or email us for updates specific to your region.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-a7" id="faq-q7">
+              <span>Can I order more than 5?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </button>
+            <div class="faq-answer" id="faq-a7" role="region" aria-labelledby="faq-q7">
+              <div class="faq-answer-inner">
+                <p>Individual orders are currently capped at 5 units to ensure fair availability for all customers. If you're looking for a larger quantity — for a team, office, or gift — reach out directly at <a href="mailto:hello@backmellow.com">hello@backmellow.com</a> and we'll be happy to help.</p>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /.faq-list -->
+      </div>
+    </section><!-- /#faq -->
+
+
+  </main><!-- /main -->
+
+  <!-- =====================================================================
+       FOOTER
+  ====================================================================== -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+
+      <div class="footer-brand">
+        <a href="#home" class="footer-logo">BackMellow</a>
+        <p class="footer-tagline">Everyday back comfort, wherever you sit.</p>
+        <div class="footer-socials" aria-label="Social media links">
+          <a href="#" class="social-icon" aria-label="BackMellow on Instagram" rel="noopener noreferrer">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
+          <a href="#" class="social-icon" aria-label="BackMellow on TikTok" rel="noopener noreferrer">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/>
+            </svg>
+          </a>
+          <a href="#" class="social-icon" aria-label="BackMellow on Facebook" rel="noopener noreferrer">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-col-title">Shop</h4>
+        <ul>
+          <li><a href="#shop">Lumbar Pillow</a></li>
+          <li><a href="#shop">Bundle Deal</a></li>
+          <li><a href="#benefits">Why BackMellow</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-col-title">Support</h4>
+        <ul>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="mailto:hello@backmellow.com">Contact Us</a></li>
+          <li><a href="#">Shipping Info</a></li>
+          <li><a href="#">Returns</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-col-title">Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Return Policy</a></li>
+        </ul>
+      </div>
+
+    </div><!-- /.footer-inner -->
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <p>&copy; 2026 BackMellow. All rights reserved.</p>
+        <a href="mailto:hello@backmellow.com" class="footer-email">hello@backmellow.com</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
