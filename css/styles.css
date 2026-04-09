@@ -134,10 +134,31 @@ ul, ol { list-style: none; }
 }
 
 /* Logo */
-.logo { display: flex; align-items: center; gap: 8px; text-decoration: none; flex-shrink: 0; }
-.logo-mark { display: flex; align-items: center; }
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+.logo-mark { display: flex; align-items: center; flex-shrink: 0; }
 .logo-text { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); letter-spacing: -.02em; }
 .logo:hover { text-decoration: none; }
+
+/* Logo image assets */
+.logo-icon-img {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+}
+.logo-text-img {
+  height: auto;
+  max-height: 46px;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
+  display: block;
+}
+@media (max-width: 480px) {
+  .logo-text-img { max-height: 38px; max-width: 155px; }
+  .logo-icon-img { height: 32px; }
+}
 
 /* Desktop nav */
 .main-nav { flex: 1; display: none; }
@@ -890,12 +911,17 @@ section { padding: clamp(56px, 8vw, 96px) 0; }
 
 .footer-brand { display: flex; flex-direction: column; gap: 14px; }
 .footer-logo {
+  display: inline-flex; align-items: center; gap: 9px;
   font-size: 1.25rem; font-weight: 700; color: var(--white);
   letter-spacing: -.02em; text-decoration: none;
 }
 .footer-logo:hover { text-decoration: none; }
+.footer-logo-icon {
+  height: 30px; width: auto; object-fit: contain; display: block; flex-shrink: 0;
+  filter: brightness(0) invert(1); opacity: .88;
+}
 .footer-tagline { font-size: .875rem; color: rgba(255,255,255,.5); line-height: 1.6; max-width: 240px; }
-.footer-socials { display: flex; gap: 10px; }
+.footer-socials { display: flex; gap: 10px; align-items: center; }
 .social-icon {
   width: 36px; height: 36px; border-radius: var(--r-full);
   border: 1px solid rgba(255,255,255,.15);
@@ -904,6 +930,9 @@ section { padding: clamp(56px, 8vw, 96px) 0; }
   transition: background var(--t), color var(--t), border-color var(--t);
 }
 .social-icon:hover { background: rgba(255,255,255,.1); color: var(--white); border-color: rgba(255,255,255,.3); text-decoration: none; }
+.social-icon-tiktok { color: rgba(255,255,255,.8); background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.22); }
+.social-icon-tiktok:hover { background: rgba(255,255,255,.18); color: var(--white); border-color: rgba(255,255,255,.4); }
+.social-icon-soon { opacity: .3; cursor: default; pointer-events: none; }
 
 .footer-col { display: flex; flex-direction: column; gap: 14px; }
 .footer-col-title {
@@ -1344,4 +1373,73 @@ section { padding: clamp(56px, 8vw, 96px) 0; }
   border-radius: 50%;
   bottom: -200px; left: -150px;
   pointer-events: none;
+}
+
+/* =============================================================================
+   SOCIAL SECTION (before footer)
+   ============================================================================= */
+.social-section {
+  background: var(--bg-alt);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: clamp(40px, 6vw, 64px) 0;
+}
+.social-section-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 32px; flex-wrap: wrap;
+}
+.social-section-copy { flex: 1; min-width: 220px; }
+.social-section-title {
+  font-size: clamp(1.375rem, 3vw, 1.875rem); font-weight: 700;
+  letter-spacing: -.025em; color: var(--text-primary); margin-bottom: 8px;
+}
+.social-section-sub {
+  font-size: .9375rem; color: var(--text-secondary); line-height: 1.65; max-width: 400px;
+}
+.social-buttons-row {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+
+/* Base social button */
+.btn-social {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 13px 24px; border-radius: var(--r-full);
+  font-size: .9375rem; font-weight: 600; line-height: 1;
+  text-decoration: none; white-space: nowrap; cursor: pointer;
+  transition: background var(--t), transform var(--t-fast), box-shadow var(--t), border-color var(--t);
+  border: 2px solid transparent;
+}
+.btn-social:hover { text-decoration: none; }
+.btn-social:active { transform: scale(.98); }
+
+/* TikTok CTA button */
+.btn-tiktok {
+  background: #000; color: #fff; border-color: #000;
+  box-shadow: 0 2px 14px rgba(0,0,0,.18);
+}
+.btn-tiktok:hover {
+  background: #1a1a1a; border-color: #1a1a1a; color: #fff;
+  box-shadow: 0 4px 22px rgba(0,0,0,.28);
+  transform: translateY(-1px);
+}
+
+/* Coming-Soon social buttons */
+.btn-social-soon {
+  background: transparent; color: var(--text-muted);
+  border-color: var(--border); opacity: .65; cursor: not-allowed;
+}
+.btn-social-soon svg { opacity: .7; }
+
+.social-soon-badge {
+  display: inline-flex; align-items: center;
+  padding: 2px 9px; background: var(--bg-muted); color: var(--text-muted);
+  font-size: .65rem; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; border-radius: var(--r-full);
+  border: 1px solid var(--border-dark); line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .social-section-inner { flex-direction: column; align-items: flex-start; }
+  .social-buttons-row { width: 100%; }
+  .btn-social { flex: 1; justify-content: center; min-width: 0; }
 }
