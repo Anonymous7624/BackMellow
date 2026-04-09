@@ -4,8 +4,8 @@
   "description": "Application description",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "background_color": "#5c3838",
+  "theme_color": "#5c3838",
   "orientation": "portrait-primary",
   "icons": [
     {
