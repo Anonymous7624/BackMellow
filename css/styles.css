@@ -1423,25 +1423,40 @@ section { padding: clamp(56px, 8vw, 96px) 0; }
   transform: translateY(-1px);
 }
 
-/* Coming-Soon social buttons */
-.btn-social-soon {
-  background: transparent; color: var(--text-muted);
-  border-color: var(--border); opacity: .65; cursor: not-allowed;
+/* Instagram CTA button */
+.btn-instagram {
+  background: #E1306C; color: #fff; border-color: #E1306C;
+  box-shadow: 0 2px 14px rgba(225,48,108,.2);
 }
-.btn-social-soon svg { opacity: .7; }
+.btn-instagram:hover {
+  background: #c62a60; border-color: #c62a60; color: #fff;
+  box-shadow: 0 4px 22px rgba(225,48,108,.35);
+  transform: translateY(-1px);
+}
 
-.social-soon-badge {
-  display: inline-flex; align-items: center;
-  padding: 2px 9px; background: var(--bg-muted); color: var(--text-muted);
-  font-size: .65rem; font-weight: 700; letter-spacing: .06em;
-  text-transform: uppercase; border-radius: var(--r-full);
-  border: 1px solid var(--border-dark); line-height: 1.6;
+/* Facebook CTA button */
+.btn-facebook {
+  background: #1877F2; color: #fff; border-color: #1877F2;
+  box-shadow: 0 2px 14px rgba(24,119,242,.2);
 }
+.btn-facebook:hover {
+  background: #1668d4; border-color: #1668d4; color: #fff;
+  box-shadow: 0 4px 22px rgba(24,119,242,.3);
+  transform: translateY(-1px);
+}
+
+/* Footer social icon — Instagram */
+.social-icon-instagram { color: #E1306C; }
+.social-icon-instagram:hover { color: #c62a60; }
+
+/* Footer social icon — Facebook */
+.social-icon-facebook { color: #1877F2; }
+.social-icon-facebook:hover { color: #1668d4; }
 
 @media (max-width: 640px) {
   .social-section-inner { flex-direction: column; align-items: flex-start; }
-  .social-buttons-row { width: 100%; }
-  .btn-social { flex: 1; justify-content: center; min-width: 0; }
+  .social-buttons-row { width: 100%; flex-direction: column; gap: 10px; }
+  .btn-social { width: 100%; justify-content: center; }
 }
 
 /* =============================================================================
@@ -1484,7 +1499,9 @@ body { overflow-x: hidden; }
   .desc-media-img:hover img,
   .desc-full-img:hover img,
   .shop-main-img-wrap:hover img { transform: none; }
-  .btn-tiktok:hover { transform: none; }
+  .btn-tiktok:hover,
+  .btn-instagram:hover,
+  .btn-facebook:hover { transform: none; }
 }
 
 /* 6. Mobile menu: scrollable when content is tall, prevent scroll bleed */
