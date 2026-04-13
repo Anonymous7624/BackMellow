@@ -1,0 +1,101 @@
+# =============================================================================
+#  BackMellow Analytics — Caddyfile
+#  Reverse proxy for self-hosted Umami on Ubuntu.
+#
+#  Prerequisites:
+#    - Caddy v2 installed (apt install caddy  OR  see caddyserver.com/docs)
+#    - DNS: stats.backmellow.com → your server's public IP
+#    - Docker Compose services running (umami on 127.0.0.1:3000)
+#
+#  Caddy auto-issues and renews TLS via Let's Encrypt. No certbot needed.
+#
+#  Copy this file to /etc/caddy/Caddyfile on your Ubuntu server,
+#  then run:  sudo systemctl reload caddy
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# stats.backmellow.com — Umami analytics app
+# ---------------------------------------------------------------------------
+stats.backmellow.com {
+
+  # ── CORS ─────────────────────────────────────────────────────────────────
+  # Allow the custom admin dashboard (served by GitHub Pages) to call the API.
+  # The tracking script itself is loaded from this domain, so no CORS needed
+  # for that — only the REST API calls from /admin/index.html need this.
+  @cors_preflight {
+    method OPTIONS
+  }
+  handle @cors_preflight {
+    header Access-Control-Allow-Origin  "https://backmellow.com"
+    header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    header Access-Control-Allow-Headers "Content-Type, Authorization"
+    header Access-Control-Max-Age       "3600"
+    respond "" 204
+  }
+
+  header {
+    Access-Control-Allow-Origin  "https://backmellow.com"
+    Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers "Content-Type, Authorization"
+
+    # Security headers
+    X-Content-Type-Options  "nosniff"
+    X-Frame-Options         "SAMEORIGIN"
+    Referrer-Policy         "strict-origin-when-cross-origin"
+
+    # Remove the Server header to avoid fingerprinting
+    -Server
+  }
+
+  # ── Bot / crawler IP blocking ────────────────────────────────────────────
+  # Block known bot ranges at the proxy level so they never reach Umami.
+  # Add IPs or ranges here if you notice suspicious traffic in the dashboard.
+  # Format: @blocked { remote_ip 1.2.3.4 10.0.0.0/8 }
+  #
+  # Example (uncomment and customize):
+  # @blocked_ips {
+  #   remote_ip 192.0.2.0/24
+  # }
+  # respond @blocked_ips "Forbidden" 403
+
+  # ── Rate limiting ─────────────────────────────────────────────────────────
+  # Requires the caddy-ratelimit plugin (github.com/mholt/caddy-ratelimit).
+  # Without the plugin, comment this block out.
+  # rate_limit {
+  #   zone analytics_zone {
+  #     key    {remote_host}
+  #     events 60
+  #     window 1m
+  #   }
+  # }
+
+  # ── Reverse proxy to Umami ───────────────────────────────────────────────
+  reverse_proxy 127.0.0.1:3000 {
+    # Forward real visitor IP so Umami can log it correctly
+    header_up X-Real-IP        {remote_host}
+    header_up X-Forwarded-For  {remote_host}
+    header_up X-Forwarded-Proto {scheme}
+    header_up Host             {upstream_hostport}
+
+    # Health check — Caddy will stop routing to a dead container
+    health_uri     /api/heartbeat
+    health_interval 30s
+    health_timeout  10s
+  }
+
+  # ── Access log (optional — useful for IP-level bot analysis) ─────────────
+  # log {
+  #   output file /var/log/caddy/stats.backmellow.com.access.log {
+  #     roll_size 50mb
+  #     roll_keep 5
+  #   }
+  #   format json
+  # }
+}
+
+# ---------------------------------------------------------------------------
+# Redirect www.stats.backmellow.com → stats.backmellow.com  (if needed)
+# ---------------------------------------------------------------------------
+# www.stats.backmellow.com {
+#   redir https://stats.backmellow.com{uri} permanent
+# }

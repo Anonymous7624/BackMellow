@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BackMellow Analytics</title>
+  <!--
+    BackMellow Analytics Dashboard
+    --------------------------------
+    A custom UI that authenticates against your self-hosted Umami instance
+    and shows visitor data, events, and bot-filtered sessions.
+
+    SETUP:
+      1. Change API_BASE below to your Umami domain (e.g. https://stats.backmellow.com)
+      2. After logging in, copy your Website ID from Umami › Settings › Websites
+         and paste it into the Website ID field in the dashboard header.
+      3. Configure CORS on your Caddy server (see deploy/Caddyfile) so this page
+         can call the Umami API cross-origin.
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <style>
+    /* =========================================================================
+       Reset + Base
+    ========================================================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --brand:       #C4956A;
+      --brand-dark:  #a57450;
+      --bg:          #f0f2f5;
+      --surface:     #ffffff;
+      --surface-2:   #f8f9fa;
+      --border:      #e2e8f0;
+      --text:        #1e293b;
+      --text-muted:  #64748b;
+      --success:     #22c55e;
+      --danger:      #ef4444;
+      --info:        #3b82f6;
+      --radius:      10px;
+      --shadow:      0 1px 3px rgba(0,0,0,.07), 0 4px 12px rgba(0,0,0,.05);
+      --shadow-lg:   0 8px 30px rgba(0,0,0,.12);
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    a { color: var(--brand); text-decoration: none; }
+    button { cursor: pointer; font-family: inherit; }
+
+    /* =========================================================================
+       Login Screen
+    ========================================================================= */
+    #login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    }
+    .login-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: var(--shadow-lg);
+    }
+    .login-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .login-logo-mark {
+      width: 36px; height: 36px;
+      background: var(--brand);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .login-logo-mark svg { color: #fff; }
+    .login-title  { font-size: 20px; font-weight: 700; color: var(--text); }
+    .login-sub    { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; margin-top: 4px; }
+    .form-field   { margin-bottom: 16px; }
+    .form-label   { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+    .form-input {
+      width: 100%; padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 14px; color: var(--text);
+      background: var(--surface);
+      outline: none; transition: border-color .2s;
+    }
+    .form-input:focus { border-color: var(--brand); }
+    .btn-login {
+      width: 100%; padding: 12px;
+      background: var(--brand); color: #fff;
+      border: none; border-radius: var(--radius);
+      font-size: 15px; font-weight: 600;
+      transition: background .2s;
+    }
+    .btn-login:hover { background: var(--brand-dark); }
+    .btn-login:disabled { opacity: .6; cursor: not-allowed; }
+    .login-error {
+      margin-top: 12px; padding: 10px 14px;
+      background: #fef2f2; border: 1px solid #fecaca;
+      border-radius: var(--radius); color: var(--danger);
+      font-size: 13px; display: none;
+    }
+    .login-error.show { display: block; }
+    .login-api-row    { margin-top: 20px; }
+
+    /* =========================================================================
+       App Shell (hidden until logged in)
+    ========================================================================= */
+    #app { display: none; min-height: 100vh; flex-direction: column; }
+    #app.visible { display: flex; }
+
+    /* -- Top Navbar --------------------------------------------------------- */
+    .navbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 1px 0 var(--border);
+    }
+    .navbar-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; }
+    .navbar-mark {
+      width: 30px; height: 30px; background: var(--brand);
+      border-radius: 7px; display: flex; align-items: center; justify-content: center;
+    }
+    .navbar-mark svg { color: #fff; }
+    .navbar-right { display: flex; align-items: center; gap: 12px; }
+    .btn-sm {
+      padding: 6px 14px; border-radius: 7px;
+      font-size: 13px; font-weight: 500;
+      border: 1.5px solid var(--border);
+      background: var(--surface); color: var(--text);
+      transition: all .15s;
+    }
+    .btn-sm:hover { border-color: var(--brand); color: var(--brand); }
+    .btn-sm.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+    .btn-danger { border-color: #fca5a5; color: var(--danger); }
+    .btn-danger:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+    /* -- Controls Bar ------------------------------------------------------- */
+    .controls-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .controls-bar label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+    .controls-bar select, .controls-bar input[type="text"] {
+      padding: 6px 10px; border: 1.5px solid var(--border);
+      border-radius: 7px; font-size: 13px; color: var(--text);
+      background: var(--surface); outline: none;
+    }
+    .controls-bar select:focus, .controls-bar input[type="text"]:focus { border-color: var(--brand); }
+    .controls-sep { width: 1px; height: 24px; background: var(--border); }
+    .bot-filter-toggle { display: flex; align-items: center; gap: 8px; }
+    .toggle-switch {
+      position: relative; width: 36px; height: 20px; cursor: pointer;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: #cbd5e1; border-radius: 20px; transition: .2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: #fff; top: 3px; left: 3px; transition: .2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: var(--success); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); }
+    .load-btn {
+      padding: 7px 18px; background: var(--brand); color: #fff;
+      border: none; border-radius: 7px; font-size: 13px; font-weight: 600;
+      transition: background .2s; margin-left: auto;
+    }
+    .load-btn:hover { background: var(--brand-dark); }
+
+    /* -- Main Content ------------------------------------------------------- */
+    .main { padding: 24px; flex: 1; }
+
+    /* -- Stat Cards --------------------------------------------------------- */
+    .stat-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
+    @media (max-width: 1200px) { .stat-cards { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 700px)  { .stat-cards { grid-template-columns: 1fr 1fr; } }
+    .stat-card {
+      background: var(--surface); border-radius: var(--radius);
+      padding: 20px; box-shadow: var(--shadow);
+      border-left: 3px solid transparent;
+      transition: box-shadow .2s;
+    }
+    .stat-card:hover { box-shadow: var(--shadow-lg); }
+    .stat-card.brand  { border-left-color: var(--brand); }
+    .stat-card.blue   { border-left-color: var(--info); }
+    .stat-card.green  { border-left-color: var(--success); }
+    .stat-card.purple { border-left-color: #8b5cf6; }
+    .stat-card.orange { border-left-color: #f97316; }
+    .stat-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); margin-bottom: 6px; }
+    .stat-value { font-size: 28px; font-weight: 700; color: var(--text); line-height: 1; }
+    .stat-delta { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    .stat-delta.up   { color: var(--success); }
+    .stat-delta.down { color: var(--danger); }
+
+    /* -- Charts ------------------------------------------------------------- */
+    .chart-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 24px; }
+    @media (max-width: 900px) { .chart-row { grid-template-columns: 1fr; } }
+    .panel {
+      background: var(--surface); border-radius: var(--radius);
+      padding: 20px; box-shadow: var(--shadow);
+    }
+    .panel-title {
+      font-size: 13px; font-weight: 700; color: var(--text);
+      margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+    }
+    .panel-title span { color: var(--text-muted); font-weight: 400; font-size: 12px; }
+    .chart-wrap { position: relative; height: 260px; }
+    .chart-wrap-sm { position: relative; height: 180px; }
+
+    /* -- Tables ------------------------------------------------------------- */
+    .table-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    @media (max-width: 900px) { .table-grid { grid-template-columns: 1fr; } }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .05em; color: var(--text-muted); padding: 8px 0;
+      border-bottom: 1px solid var(--border); text-align: left;
+    }
+    .data-table td { padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table .bar-cell { width: 60%; position: relative; }
+    .bar-bg   { height: 6px; background: #f1f5f9; border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--brand); border-radius: 3px; transition: width .4s; }
+    .count-cell { text-align: right; font-weight: 600; white-space: nowrap; color: var(--text-muted); }
+    .url-cell { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* -- Events section ----------------------------------------------------- */
+    .events-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    @media (max-width: 900px) { .events-row { grid-template-columns: 1fr; } }
+
+    /* -- Loading / empty states --------------------------------------------- */
+    .loading-state {
+      display: flex; align-items: center; justify-content: center;
+      height: 120px; color: var(--text-muted); font-size: 13px; gap: 8px;
+    }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--brand);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty-state {
+      text-align: center; padding: 32px; color: var(--text-muted); font-size: 13px;
+    }
+
+    /* -- Bot filter banner -------------------------------------------------- */
+    .bot-banner {
+      background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: var(--radius); padding: 10px 16px;
+      font-size: 12px; color: #1e40af; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .bot-banner.filtered { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+
+    /* -- Status bar --------------------------------------------------------- */
+    .status-bar {
+      background: var(--surface-2); border-top: 1px solid var(--border);
+      padding: 6px 24px; font-size: 11px; color: var(--text-muted);
+      display: flex; gap: 20px; align-items: center;
+    }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); }
+
+    /* -- Misc --------------------------------------------------------------- */
+    .badge {
+      display: inline-block; padding: 2px 8px;
+      border-radius: 20px; font-size: 11px; font-weight: 600;
+      background: #fef3c7; color: #92400e;
+    }
+    .text-muted { color: var(--text-muted); }
+    #error-banner {
+      background: #fef2f2; border: 1px solid #fecaca;
+      border-radius: var(--radius); padding: 12px 16px;
+      font-size: 13px; color: var(--danger); margin-bottom: 16px; display: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- =========================================================================
+     LOGIN SCREEN
+========================================================================= -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <span class="login-title">BackMellow Analytics</span>
+    </div>
+    <p class="login-sub">Sign in with your Umami credentials to view your store data.</p>
+
+    <form id="login-form">
+      <div class="form-field login-api-row">
+        <label class="form-label" for="api-base">Analytics Server URL</label>
+        <input class="form-input" type="text" id="api-base"
+               placeholder="https://stats.backmellow.com" autocomplete="off" />
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="login-user">Username</label>
+        <input class="form-input" type="text" id="login-user"
+               placeholder="admin" autocomplete="username" />
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="login-pass">Password</label>
+        <input class="form-input" type="password" id="login-pass"
+               placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <button type="submit" class="btn-login" id="login-btn">Sign In</button>
+      <div class="login-error" id="login-error"></div>
+    </form>
+  </div>
+</div>
+
+<!-- =========================================================================
+     DASHBOARD APP
+========================================================================= -->
+<div id="app">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-mark">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      BackMellow Analytics
+    </div>
+    <div class="navbar-right">
+      <span id="logged-in-as" class="text-muted" style="font-size:12px"></span>
+      <button class="btn-sm btn-danger" id="logout-btn">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- Controls Bar -->
+  <div class="controls-bar">
+    <label for="website-select">Website</label>
+    <select id="website-select">
+      <option value="">— select website —</option>
+    </select>
+
+    <div class="controls-sep"></div>
+
+    <label for="range-select">Range</label>
+    <select id="range-select">
+      <option value="1">Today</option>
+      <option value="7" selected>Last 7 days</option>
+      <option value="30">Last 30 days</option>
+      <option value="90">Last 90 days</option>
+    </select>
+
+    <div class="controls-sep"></div>
+
+    <div class="bot-filter-toggle">
+      <label class="toggle-switch" title="When ON: hides sessions under 3 s (likely bots/crawlers not already caught by Umami's UA filter)">
+        <input type="checkbox" id="bot-filter-toggle" checked />
+        <span class="toggle-slider"></span>
+      </label>
+      <span style="font-size:12px;font-weight:600;">Advanced bot filter</span>
+    </div>
+
+    <button class="load-btn" id="load-btn">Load Data</button>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div id="error-banner"></div>
+
+    <!-- Bot filter status banner -->
+    <div class="bot-banner filtered" id="bot-banner">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Advanced bot filter ON — sessions under 3 s and known bot IPs are excluded. Umami also filters common crawlers by User-Agent.
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stat-cards" id="stat-cards">
+      <div class="stat-card brand">
+        <div class="stat-label">Unique Visitors</div>
+        <div class="stat-value" id="stat-visitors">—</div>
+        <div class="stat-delta" id="stat-visitors-delta"></div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-label">Pageviews</div>
+        <div class="stat-value" id="stat-pageviews">—</div>
+        <div class="stat-delta" id="stat-pageviews-delta"></div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">Sessions</div>
+        <div class="stat-value" id="stat-visits">—</div>
+        <div class="stat-delta" id="stat-visits-delta"></div>
+      </div>
+      <div class="stat-card purple">
+        <div class="stat-label">Avg. Time on Site</div>
+        <div class="stat-value" id="stat-time">—</div>
+        <div class="stat-delta" id="stat-time-delta"></div>
+      </div>
+      <div class="stat-card orange">
+        <div class="stat-label">Bounce Rate</div>
+        <div class="stat-value" id="stat-bounce">—</div>
+        <div class="stat-delta" id="stat-bounce-delta"></div>
+      </div>
+    </div>
+
+    <!-- Main timeline chart -->
+    <div class="panel" style="margin-bottom:24px">
+      <div class="panel-title">
+        Visitors &amp; Pageviews Over Time
+        <span id="chart-range-label"></span>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="timeline-chart"></canvas>
+        <div class="loading-state" id="timeline-loading">
+          <div class="spinner"></div> Loading…
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Pages + Referrers -->
+    <div class="table-grid">
+      <div class="panel">
+        <div class="panel-title">Top Pages</div>
+        <div id="pages-container"><div class="loading-state"><div class="spinner"></div></div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Top Referrers</div>
+        <div id="referrers-container"><div class="loading-state"><div class="spinner"></div></div></div>
+      </div>
+    </div>
+
+    <!-- Events timeline + Event breakdown -->
+    <div class="events-row">
+      <div class="panel">
+        <div class="panel-title">Events Over Time</div>
+        <div class="chart-wrap-sm">
+          <canvas id="events-chart"></canvas>
+          <div class="loading-state" id="events-loading">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Top Events <span>(custom ecommerce events)</span></div>
+        <div id="events-container"><div class="loading-state"><div class="spinner"></div></div></div>
+      </div>
+    </div>
+
+    <!-- Countries + Browsers -->
+    <div class="table-grid">
+      <div class="panel">
+        <div class="panel-title">Countries</div>
+        <div id="countries-container"><div class="loading-state"><div class="spinner"></div></div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Browsers &amp; OS</div>
+        <div id="browsers-container"><div class="loading-state"><div class="spinner"></div></div></div>
+      </div>
+    </div>
+
+    <!-- Time-on-site distribution -->
+    <div class="panel" style="margin-bottom:24px">
+      <div class="panel-title">
+        Session Duration Distribution
+        <span>(from custom time_on_site events)</span>
+      </div>
+      <div class="chart-wrap-sm">
+        <canvas id="duration-chart"></canvas>
+        <div class="loading-state" id="duration-loading"><div class="spinner"></div></div>
+      </div>
+    </div>
+
+  </div><!-- /.main -->
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <div class="status-dot" id="status-dot"></div>
+    <span id="status-text">Connected</span>
+    <span>·</span>
+    <span id="last-updated"></span>
+  </div>
+
+</div><!-- /#app -->
+
+<script>
+/* =============================================================================
+   BackMellow Analytics Dashboard — dashboard.js (inline)
+   Communicates with the Umami v2 REST API.
+   ============================================================================= */
+'use strict';
+
+// ── Configuration ────────────────────────────────────────────────────────────
+// API_BASE is set at login time. Stored in sessionStorage for page refreshes.
+let API_BASE = '';
+let AUTH_TOKEN = '';
+let WEBSITE_ID = '';
+let BOT_FILTER_ON = true;
+
+// Chart instances — kept so we can destroy/re-create on reload
+let timelineChart = null;
+let eventsChart   = null;
+let durationChart = null;
+
+// ── DOM refs ─────────────────────────────────────────────────────────────────
+const loginScreen    = document.getElementById('login-screen');
+const app            = document.getElementById('app');
+const loginForm      = document.getElementById('login-form');
+const loginError     = document.getElementById('login-error');
+const loginBtn       = document.getElementById('login-btn');
+const apiBaseInput   = document.getElementById('api-base');
+const loginUser      = document.getElementById('login-user');
+const loginPass      = document.getElementById('login-pass');
+const logoutBtn      = document.getElementById('logout-btn');
+const loggedInAs     = document.getElementById('logged-in-as');
+const websiteSelect  = document.getElementById('website-select');
+const rangeSelect    = document.getElementById('range-select');
+const botToggle      = document.getElementById('bot-filter-toggle');
+const botBanner      = document.getElementById('bot-banner');
+const loadBtn        = document.getElementById('load-btn');
+const errorBanner    = document.getElementById('error-banner');
+const lastUpdated    = document.getElementById('last-updated');
+const statusText     = document.getElementById('status-text');
+const statusDot      = document.getElementById('status-dot');
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function fmtNum(n) {
+  if (n == null || n === '') return '—';
+  return Number(n).toLocaleString();
+}
+
+function fmtTime(seconds) {
+  if (seconds == null || seconds === '' || seconds === 0) return '—';
+  const s = Math.round(Number(seconds));
+  if (s < 60)  return `${s}s`;
+  if (s < 3600) return `${Math.floor(s/60)}m ${s%60}s`;
+  return `${Math.floor(s/3600)}h ${Math.floor((s%3600)/60)}m`;
+}
+
+function fmtDelta(curr, prev) {
+  if (!prev || !curr) return '';
+  const pct = Math.round(((curr - prev) / prev) * 100);
+  if (pct === 0) return '<span>no change</span>';
+  return `<span class="${pct > 0 ? 'up' : 'down'}">${pct > 0 ? '+' : ''}${pct}% vs prev period</span>`;
+}
+
+function dateRange(days) {
+  const end   = Date.now();
+  const start = end - days * 24 * 60 * 60 * 1000;
+  return { startAt: start, endAt: end };
+}
+
+async function apiFetch(path, opts = {}) {
+  const url = `${API_BASE}${path}`;
+  const res = await fetch(url, {
+    ...opts,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(AUTH_TOKEN ? { 'Authorization': `Bearer ${AUTH_TOKEN}` } : {}),
+      ...(opts.headers || {}),
+    },
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => res.statusText);
+    throw new Error(`API ${res.status}: ${text}`);
+  }
+  return res.json();
+}
+
+function showError(msg) {
+  errorBanner.textContent = msg;
+  errorBanner.style.display = 'block';
+  setTimeout(() => { errorBanner.style.display = 'none'; }, 8000);
+}
+
+function setLoading(id, on) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = on ? 'flex' : 'none';
+}
+
+// ── Session persistence ───────────────────────────────────────────────────────
+
+function saveSession() {
+  try {
+    sessionStorage.setItem('bm_admin_session', JSON.stringify({
+      API_BASE, AUTH_TOKEN, WEBSITE_ID,
+      username: loggedInAs.textContent,
+    }));
+  } catch {}
+}
+
+function restoreSession() {
+  try {
+    const raw = sessionStorage.getItem('bm_admin_session');
+    if (!raw) return false;
+    const s = JSON.parse(raw);
+    API_BASE   = s.API_BASE   || '';
+    AUTH_TOKEN = s.AUTH_TOKEN || '';
+    WEBSITE_ID = s.WEBSITE_ID || '';
+    if (s.username) loggedInAs.textContent = s.username;
+    if (!API_BASE || !AUTH_TOKEN) return false;
+    apiBaseInput.value = API_BASE;
+    return true;
+  } catch { return false; }
+}
+
+// ── Login / Logout ────────────────────────────────────────────────────────────
+
+loginForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const base = (apiBaseInput.value || '').trim().replace(/\/$/, '');
+  const user = loginUser.value.trim();
+  const pass = loginPass.value;
+  if (!base || !user || !pass) {
+    showLoginError('Please fill in all fields.');
+    return;
+  }
+  loginBtn.disabled = true;
+  loginBtn.textContent = 'Signing in…';
+  loginError.classList.remove('show');
+
+  try {
+    API_BASE = base;
+    const data = await apiFetch('/api/auth/login', {
+      method: 'POST',
+      body:   JSON.stringify({ username: user, password: pass }),
+    });
+    if (!data.token) throw new Error('No token in response. Check server logs.');
+    AUTH_TOKEN = data.token;
+    loggedInAs.textContent = `Signed in as ${data.user?.username || user}`;
+    saveSession();
+    await enterDashboard();
+  } catch (err) {
+    showLoginError(`Login failed: ${err.message}`);
+  } finally {
+    loginBtn.disabled = false;
+    loginBtn.textContent = 'Sign In';
+  }
+});
+
+function showLoginError(msg) {
+  loginError.textContent = msg;
+  loginError.classList.add('show');
+}
+
+logoutBtn.addEventListener('click', () => {
+  AUTH_TOKEN = '';
+  try { sessionStorage.removeItem('bm_admin_session'); } catch {}
+  app.classList.remove('visible');
+  loginScreen.style.display = 'flex';
+  loginPass.value = '';
+});
+
+// ── Enter Dashboard ───────────────────────────────────────────────────────────
+
+async function enterDashboard() {
+  loginScreen.style.display = 'none';
+  app.classList.add('visible');
+
+  // Load website list
+  try {
+    const websites = await apiFetch('/api/websites?pageSize=50');
+    const list = websites.data || websites; // v2 wraps in { data: [] }
+    websiteSelect.innerHTML = '<option value="">— select website —</option>';
+    list.forEach(w => {
+      const opt = document.createElement('option');
+      opt.value = w.id;
+      opt.textContent = `${w.name} (${w.domain})`;
+      websiteSelect.appendChild(opt);
+    });
+    // Auto-select if only one or if WEBSITE_ID is already set
+    if (WEBSITE_ID) {
+      websiteSelect.value = WEBSITE_ID;
+    } else if (list.length === 1) {
+      websiteSelect.value = list[0].id;
+      WEBSITE_ID = list[0].id;
+      saveSession();
+    }
+    if (WEBSITE_ID) loadDashboard();
+  } catch (err) {
+    showError(`Could not load websites: ${err.message}`);
+  }
+}
+
+// ── Event listeners ───────────────────────────────────────────────────────────
+
+websiteSelect.addEventListener('change', () => {
+  WEBSITE_ID = websiteSelect.value;
+  saveSession();
+});
+
+loadBtn.addEventListener('click', () => {
+  WEBSITE_ID = websiteSelect.value;
+  if (!WEBSITE_ID) { showError('Please select a website first.'); return; }
+  BOT_FILTER_ON = botToggle.checked;
+  updateBotBanner();
+  saveSession();
+  loadDashboard();
+});
+
+botToggle.addEventListener('change', () => {
+  BOT_FILTER_ON = botToggle.checked;
+  updateBotBanner();
+});
+
+function updateBotBanner() {
+  if (BOT_FILTER_ON) {
+    botBanner.className = 'bot-banner filtered';
+    botBanner.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Advanced bot filter ON — sessions under 3 s (likely bots not caught by UA filter) are excluded. Umami also pre-filters known crawlers.`;
+  } else {
+    botBanner.className = 'bot-banner';
+    botBanner.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Bot filter OFF — showing all sessions. Umami still filters common crawlers by User-Agent automatically.`;
+  }
+}
+
+// ── Main data loader ──────────────────────────────────────────────────────────
+
+async function loadDashboard() {
+  if (!WEBSITE_ID) return;
+  const days = parseInt(rangeSelect.value, 10);
+  const { startAt, endAt } = dateRange(days);
+
+  document.getElementById('chart-range-label').textContent =
+    `— last ${days} day${days !== 1 ? 's' : ''}`;
+
+  loadBtn.disabled = true;
+  loadBtn.textContent = 'Loading…';
+  errorBanner.style.display = 'none';
+
+  try {
+    await Promise.all([
+      loadStats(startAt, endAt, days),
+      loadTimeline(startAt, endAt, days),
+      loadTopPages(startAt, endAt),
+      loadReferrers(startAt, endAt),
+      loadEvents(startAt, endAt, days),
+      loadCountries(startAt, endAt),
+      loadBrowsers(startAt, endAt),
+      loadDuration(startAt, endAt),
+    ]);
+
+    lastUpdated.textContent = `Updated at ${new Date().toLocaleTimeString()}`;
+    statusText.textContent  = 'Connected';
+    statusDot.style.background = 'var(--success)';
+  } catch (err) {
+    showError(`Failed to load data: ${err.message}`);
+    statusText.textContent = 'Error';
+    statusDot.style.background = 'var(--danger)';
+  } finally {
+    loadBtn.disabled = false;
+    loadBtn.textContent = 'Load Data';
+  }
+}
+
+// ── Stats Cards ───────────────────────────────────────────────────────────────
+
+async function loadStats(startAt, endAt, days) {
+  const [curr, prev] = await Promise.all([
+    apiFetch(`/api/websites/${WEBSITE_ID}/stats?startAt=${startAt}&endAt=${endAt}`),
+    apiFetch(`/api/websites/${WEBSITE_ID}/stats?startAt=${startAt - days*86400000}&endAt=${startAt}`),
+  ]);
+
+  function setCard(id, deltaId, valKey, fmt) {
+    const el = document.getElementById(id);
+    const de = document.getElementById(deltaId);
+    if (!el) return;
+    const v = curr[valKey]?.value;
+    const p = prev[valKey]?.value;
+    el.textContent = fmt ? fmt(v) : fmtNum(v);
+    if (de) de.innerHTML = fmtDelta(v, p);
+  }
+
+  setCard('stat-visitors', 'stat-visitors-delta', 'visitors');
+  setCard('stat-pageviews', 'stat-pageviews-delta', 'pageviews');
+  setCard('stat-visits', 'stat-visits-delta', 'visits');
+  setCard('stat-time', 'stat-time-delta', 'totaltime', fmtTime);
+
+  const bounceEl = document.getElementById('stat-bounce');
+  const bounceDe = document.getElementById('stat-bounce-delta');
+  const bounces  = curr.bounces?.value;
+  const visits   = curr.visits?.value;
+  if (bounceEl && bounces != null && visits) {
+    const pct = Math.round((bounces / visits) * 100);
+    bounceEl.textContent = `${pct}%`;
+    const prevPct = prev.visits?.value
+      ? Math.round(((prev.bounces?.value || 0) / prev.visits.value) * 100) : null;
+    if (bounceDe && prevPct != null) {
+      const delta = pct - prevPct;
+      bounceDe.innerHTML = `<span class="${delta < 0 ? 'up' : delta > 0 ? 'down' : ''}">${delta > 0 ? '+' : ''}${delta}% vs prev period</span>`;
+    }
+  }
+}
+
+// ── Timeline Chart ────────────────────────────────────────────────────────────
+
+async function loadTimeline(startAt, endAt, days) {
+  setLoading('timeline-loading', true);
+  const unit = days <= 1 ? 'hour' : days <= 31 ? 'day' : 'week';
+
+  const data = await apiFetch(
+    `/api/websites/${WEBSITE_ID}/pageviews?startAt=${startAt}&endAt=${endAt}&unit=${unit}`
+  );
+
+  const pvLabels  = (data.pageviews || []).map(p => p.x);
+  const pvCounts  = (data.pageviews || []).map(p => p.y);
+  const sesLabels = (data.sessions  || []).map(p => p.x);
+  const sesCounts = (data.sessions  || []).map(p => p.y);
+
+  // Use pageview labels as axis (they match)
+  const labels = pvLabels.length ? pvLabels : sesLabels;
+
+  setLoading('timeline-loading', false);
+
+  if (timelineChart) { timelineChart.destroy(); timelineChart = null; }
+
+  const ctx = document.getElementById('timeline-chart').getContext('2d');
+  timelineChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Pageviews',
+          data:  pvCounts,
+          borderColor:     '#C4956A',
+          backgroundColor: 'rgba(196,149,106,.12)',
+          tension:         .35,
+          fill:            true,
+          pointRadius:     labels.length > 30 ? 1 : 3,
+        },
+        {
+          label: 'Visitors',
+          data:  sesCounts,
+          borderColor:     '#3b82f6',
+          backgroundColor: 'rgba(59,130,246,.08)',
+          tension:         .35,
+          fill:            true,
+          pointRadius:     labels.length > 30 ? 1 : 3,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 12, font: { size: 12 } } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${fmtNum(ctx.parsed.y)}` } },
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { maxTicksLimit: 10, font: { size: 11 } } },
+        y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 } } },
+      },
+    },
+  });
+}
+
+// ── Top Pages ─────────────────────────────────────────────────────────────────
+
+async function loadTopPages(startAt, endAt) {
+  const data = await apiFetch(
+    `/api/websites/${WEBSITE_ID}/metrics?type=url&startAt=${startAt}&endAt=${endAt}&limit=15`
+  );
+  renderBarTable('pages-container', data, 'Page', 'Views');
+}
+
+// ── Referrers ─────────────────────────────────────────────────────────────────
+
+async function loadReferrers(startAt, endAt) {
+  const data = await apiFetch(
+    `/api/websites/${WEBSITE_ID}/metrics?type=referrer&startAt=${startAt}&endAt=${endAt}&limit=15`
+  );
+  renderBarTable('referrers-container', data, 'Referrer', 'Sessions', true);
+}
+
+// ── Events ────────────────────────────────────────────────────────────────────
+
+async function loadEvents(startAt, endAt, days) {
+  setLoading('events-loading', true);
+  const unit = days <= 1 ? 'hour' : days <= 31 ? 'day' : 'week';
+
+  const [evTimeline, evMetrics] = await Promise.all([
+    apiFetch(`/api/websites/${WEBSITE_ID}/events?startAt=${startAt}&endAt=${endAt}&unit=${unit}`).catch(() => ({ events: [] })),
+    apiFetch(`/api/websites/${WEBSITE_ID}/metrics?type=event&startAt=${startAt}&endAt=${endAt}&limit=30`).catch(() => []),
+  ]);
+
+  // Timeline chart
+  const events  = evTimeline.events || [];
+  const labels  = events.map(e => e.x);
+  const counts  = events.map(e => e.y);
+
+  setLoading('events-loading', false);
+
+  if (eventsChart) { eventsChart.destroy(); eventsChart = null; }
+
+  const ctx = document.getElementById('events-chart').getContext('2d');
+  eventsChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Events',
+        data:  counts,
+        backgroundColor: 'rgba(196,149,106,.7)',
+        borderColor:     '#C4956A',
+        borderWidth:     1,
+        borderRadius:    3,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` Events: ${fmtNum(ctx.parsed.y)}` } },
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { maxTicksLimit: 10, font: { size: 11 } } },
+        y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 } } },
+      },
+    },
+  });
+
+  // Event breakdown table — label with friendly names
+  const LABELS = {
+    'view_product':             'View Product',
+    'add_to_cart':              'Add to Cart',
+    'open_cart':                'Open Cart',
+    'change_cart_qty':          'Change Cart Qty',
+    'remove_from_cart':         'Remove from Cart',
+    'click_buy_now':            'Click Buy Now',
+    'begin_checkout_placeholder': 'Begin Checkout',
+    'click_shop_now':           'Click Shop Now',
+    'click_shipping_info':      'Click Shipping Info',
+    'click_return_policy':      'Click Return Policy',
+    'click_support_email':      'Click Support Email',
+    'select_color':             'Select Color',
+    'time_on_site':             'Time on Site',
+    'view_page':                'View Page',
+    'click_social':             'Click Social Link',
+  };
+
+  let rows = (Array.isArray(evMetrics) ? evMetrics : evMetrics.data || [])
+    .map(e => ({ x: LABELS[e.x] || e.x, y: e.y }))
+    .sort((a, b) => b.y - a.y);
+
+  if (BOT_FILTER_ON) {
+    // When bot filter is on, strip out raw 'view_page' since pageviews are tracked
+    // at the Umami level and duplicate bot-screened data appears in custom events too
+    rows = rows.filter(r => r.x !== 'View Page');
+  }
+
+  renderBarTable('events-container', rows, 'Event', 'Count');
+}
+
+// ── Countries ─────────────────────────────────────────────────────────────────
+
+async function loadCountries(startAt, endAt) {
+  const data = await apiFetch(
+    `/api/websites/${WEBSITE_ID}/metrics?type=country&startAt=${startAt}&endAt=${endAt}&limit=20`
+  );
+  // Country codes → names where possible
+  const NAME_MAP = {
+    US:'United States',CA:'Canada',GB:'United Kingdom',AU:'Australia',
+    DE:'Germany',FR:'France',NL:'Netherlands',IN:'India',
+    BR:'Brazil',MX:'Mexico',SG:'Singapore',JP:'Japan',
+    SE:'Sweden',NO:'Norway',DK:'Denmark',NZ:'New Zealand',
+  };
+  const mapped = (Array.isArray(data) ? data : data.data || []).map(r => ({
+    x: NAME_MAP[r.x] || r.x || '(unknown)', y: r.y,
+  }));
+  renderBarTable('countries-container', mapped, 'Country', 'Sessions');
+}
+
+// ── Browsers ──────────────────────────────────────────────────────────────────
+
+async function loadBrowsers(startAt, endAt) {
+  const data = await apiFetch(
+    `/api/websites/${WEBSITE_ID}/metrics?type=browser&startAt=${startAt}&endAt=${endAt}&limit=12`
+  );
+  renderBarTable('browsers-container', data, 'Browser', 'Sessions');
+}
+
+// ── Session Duration Distribution ─────────────────────────────────────────────
+// Uses data from the custom `time_on_site` event to build a histogram.
+
+async function loadDuration(startAt, endAt) {
+  setLoading('duration-loading', true);
+  try {
+    // Fetch event data — we're looking for time_on_site event property values
+    const data = await apiFetch(
+      `/api/websites/${WEBSITE_ID}/event-data/events?startAt=${startAt}&endAt=${endAt}&event=time_on_site`
+    ).catch(() => null);
+
+    setLoading('duration-loading', false);
+
+    // If the endpoint returns nothing useful, show a friendly message
+    if (!data || !data.data?.length) {
+      document.getElementById('duration-loading').style.display = 'none';
+      const canvas = document.getElementById('duration-chart');
+      canvas.style.display = 'none';
+      const wrap = canvas.parentElement;
+      wrap.innerHTML = '<div class="empty-state">Duration data will appear here after visitors are tracked via the <code>time_on_site</code> event. Give it a few sessions.</div>';
+      return;
+    }
+
+    // Bucket sessions into 0-10s, 10-30s, 30-60s, 1-3min, 3-10min, 10min+
+    const buckets = { '0–10s': 0, '10–30s': 0, '30–60s': 0, '1–3 min': 0, '3–10 min': 0, '10+ min': 0 };
+    (data.data || []).forEach(ev => {
+      const s = Number(ev.stringValue || ev.numberValue || 0);
+      if (BOT_FILTER_ON && s < 3) return; // skip sub-3s sessions (bot filter)
+      if      (s < 10)   buckets['0–10s']++;
+      else if (s < 30)   buckets['10–30s']++;
+      else if (s < 60)   buckets['30–60s']++;
+      else if (s < 180)  buckets['1–3 min']++;
+      else if (s < 600)  buckets['3–10 min']++;
+      else               buckets['10+ min']++;
+    });
+
+    if (durationChart) { durationChart.destroy(); durationChart = null; }
+
+    const ctx = document.getElementById('duration-chart').getContext('2d');
+    durationChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: Object.keys(buckets),
+        datasets: [{
+          label: 'Sessions',
+          data:  Object.values(buckets),
+          backgroundColor: [
+            BOT_FILTER_ON ? 'rgba(239,68,68,.35)' : 'rgba(196,149,106,.5)',
+            'rgba(196,149,106,.5)',
+            'rgba(196,149,106,.65)',
+            'rgba(196,149,106,.8)',
+            'rgba(196,149,106,.95)',
+            '#C4956A',
+          ],
+          borderRadius: 4,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              afterLabel: BOT_FILTER_ON && buckets['0–10s'] > 0
+                ? ctx => ctx.label === '0–10s' ? '(shown because bot filter is OFF for this bucket)' : ''
+                : undefined,
+            },
+          },
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+          y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 }, stepSize: 1 } },
+        },
+      },
+    });
+
+  } catch {
+    setLoading('duration-loading', false);
+  }
+}
+
+// ── renderBarTable — reusable horizontal-bar table renderer ──────────────────
+
+function renderBarTable(containerId, data, labelCol, countCol, truncate = false) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const rows = Array.isArray(data) ? data : (data.data || []);
+
+  if (!rows.length) {
+    container.innerHTML = '<div class="empty-state">No data for this period.</div>';
+    return;
+  }
+
+  const max = Math.max(...rows.map(r => r.y || 0));
+
+  const html = `
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>${labelCol}</th>
+          <th class="bar-cell"></th>
+          <th class="count-cell">${countCol}</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(r => {
+          const label = truncate && r.x && r.x.length > 45
+            ? r.x.slice(0, 45) + '…' : (r.x || '(direct)');
+          const pct   = max > 0 ? Math.round((r.y / max) * 100) : 0;
+          return `
+            <tr>
+              <td class="url-cell" title="${escHtml(r.x || '')}">${escHtml(label)}</td>
+              <td class="bar-cell">
+                <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
+              </td>
+              <td class="count-cell">${fmtNum(r.y)}</td>
+            </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+
+  container.innerHTML = html;
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ── Bootstrap ─────────────────────────────────────────────────────────────────
+
+(function init() {
+  BOT_FILTER_ON = botToggle.checked;
+  updateBotBanner();
+
+  // Try to restore an existing session (e.g. page refresh)
+  if (restoreSession()) {
+    enterDashboard();
+  }
+}());
+</script>
+</body>
+</html>

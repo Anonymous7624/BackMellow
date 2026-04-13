@@ -21,6 +21,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- =====================================================================
+       Umami Analytics
+       After self-hosting, replace the two placeholder values below:
+         UMAMI_SCRIPT_URL  → e.g. https://stats.backmellow.com/script.js
+         UMAMI_WEBSITE_ID  → UUID from Umami Settings › Websites
+       ====================================================================== -->
+  <script defer
+    src="UMAMI_SCRIPT_URL"
+    data-website-id="UMAMI_WEBSITE_ID"
+  ></script>
 </head>
 <body>
 
@@ -1187,6 +1198,9 @@
     </div>
   </footer>
 
+  <!-- analytics.js must load before main.js so window.bmTrack is defined
+       when main.js's DOMContentLoaded handler runs -->
+  <script src="js/analytics.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

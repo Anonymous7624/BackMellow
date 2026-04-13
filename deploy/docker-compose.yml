@@ -1,0 +1,80 @@
+# =============================================================================
+#  BackMellow — Umami self-hosted analytics
+#  docker-compose.yml
+#
+#  Services:
+#    umami   — the Umami Next.js web app (port 3000 internally)
+#    db      — PostgreSQL 15 database
+#
+#  Caddy handles TLS termination externally (see Caddyfile).
+#
+#  USAGE:
+#    1. Copy .env.example → .env and fill in real values
+#    2. docker compose up -d
+#    3. Point stats.backmellow.com DNS → your server IP
+#    4. Caddy will auto-issue the TLS cert
+#    5. Visit https://stats.backmellow.com, create your first user,
+#       then add your website and copy the Website ID
+# =============================================================================
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # Umami analytics app
+  # ---------------------------------------------------------------------------
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    container_name: bm_umami
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}"
+      DATABASE_TYPE: postgresql
+      APP_SECRET: "${UMAMI_APP_SECRET}"
+      # Disable bot check to let Umami handle bots (recommended: false = DO check)
+      DISABLE_BOT_CHECK: "false"
+      # Uncomment to restrict which origins can send tracking data
+      # ALLOWED_FRAME_URLS: "https://backmellow.com"
+    ports:
+      # Only bound to localhost — Caddy proxies to this port
+      - "127.0.0.1:3000:3000"
+    networks:
+      - analytics
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/heartbeat || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL — Umami's datastore
+  # ---------------------------------------------------------------------------
+  db:
+    image: postgres:15-alpine
+    container_name: bm_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       "${POSTGRES_DB}"
+      POSTGRES_USER:     "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    volumes:
+      # Persistent data — survives container restarts and updates
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - analytics
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  analytics:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

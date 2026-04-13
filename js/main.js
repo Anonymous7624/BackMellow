@@ -130,6 +130,12 @@ function addToCart(color, qty) {
   syncCartUI();
   openCart();
   showToast('Added to cart!', 'success');
+  window.bmTrack?.('add_to_cart', {
+    product_name:   'BackMellow Lumbar Pillow',
+    selected_color: color,
+    quantity:       actual,
+    price:          unitPrice(cartTotalQty()),
+  });
 }
 
 function setCartItemQty(color, newQty) {
@@ -146,12 +152,14 @@ function setCartItemQty(color, newQty) {
 
   saveCart();
   syncCartUI();
+  window.bmTrack?.('change_cart_qty', { color, new_qty: clamped });
 }
 
 function removeCartItem(color) {
   S.cart = S.cart.filter(i => i.color !== color);
   saveCart();
   syncCartUI();
+  window.bmTrack?.('remove_from_cart', { color, product_name: 'BackMellow Lumbar Pillow' });
 }
 
 function saveCart() {
@@ -319,6 +327,7 @@ function openCart() {
   overlay?.classList.add('open'); overlay?.setAttribute('aria-hidden', 'false');
   lockScroll();
   setTimeout(() => document.getElementById('cart-close-btn')?.focus(), 60);
+  window.bmTrack?.('open_cart', { cart_qty: cartTotalQty() });
 }
 
 function closeCart() {
@@ -509,6 +518,7 @@ function initPurchaseSection() {
       const lbl = document.getElementById('selected-color-label');
       if (lbl) lbl.textContent = S.selColor;
       updatePricePreview();
+      window.bmTrack?.('select_color', { color: S.selColor, product_name: 'BackMellow Lumbar Pillow' });
     });
   });
 
@@ -526,7 +536,15 @@ function initPurchaseSection() {
   });
 
   // Buy now
-  document.getElementById('buy-now-btn')?.addEventListener('click', openCheckoutModal);
+  document.getElementById('buy-now-btn')?.addEventListener('click', () => {
+    window.bmTrack?.('click_buy_now', {
+      product_name:   'BackMellow Lumbar Pillow',
+      selected_color: S.selColor,
+      quantity:       S.selQty,
+      price:          unitPrice(cartTotalQty() + S.selQty),
+    });
+    openCheckoutModal();
+  });
 
   // Shop thumbnails
   const mainImg   = document.getElementById('shop-main-img');
@@ -541,6 +559,13 @@ function initPurchaseSection() {
 
   syncQty();
   updatePricePreview();
+
+  // Fire once per page load so you can see how many visitors reach the shop section
+  window.bmTrack?.('view_product', {
+    product_name:   'BackMellow Lumbar Pillow',
+    selected_color: S.selColor,
+    page_type:      'storefront',
+  });
 }
 
 function syncQty() {
@@ -657,6 +682,11 @@ function openCheckoutModal() {
   backdrop?.classList.add('open'); backdrop?.setAttribute('aria-hidden', 'false');
   modal?.classList.add('open');    modal?.setAttribute('aria-hidden', 'false');
   lockScroll();
+  window.bmTrack?.('begin_checkout_placeholder', {
+    cart_qty:      cartTotalQty(),
+    cart_subtotal: cartSubtotal(),
+    page_type:     'storefront',
+  });
   setTimeout(() => document.getElementById('checkout-modal-ok')?.focus(), 60);
 }
 
